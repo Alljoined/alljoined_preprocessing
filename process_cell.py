@@ -43,7 +43,8 @@ def apply_changes(df, row_index, hit_status, block_number):
 def process_csv(file_path, block_number):
     df = pd.read_csv(file_path)
 
-    i = 0
+    # Start iteration from the 5th index
+    i = 4 
     while i < len(df) - 2:
         first_row_value = df.iloc[i, 0]
         third_row_value = df.iloc[i+2, 0]
