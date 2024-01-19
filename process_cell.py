@@ -56,28 +56,34 @@ while i < raw_eeg_csv.shape[0] - 2:
     first_row_value = raw_eeg_csv.iloc[i, 0]
     third_row_value = raw_eeg_csv.iloc[i+2, 0]
 
-    # # 254 - Oddball - Correct - hit 
-    # if third_row_value == '254' and first_row_value == str(block_number+150):
-    #     hit_sataus = 1
-    #     reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
-    #     img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
-    #     modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
-    #     processed_df = processed_df._append(modified_row, ignore_index=True)
+    # 254 - Oddball - Correct - hit 
+    if third_row_value == '254' and first_row_value == str(block_number+150):
+        hit_sataus = 1
+        reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
+        img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
+        modified_row = process_row(raw_eeg_csv.iloc[i], img_idx, hit_sataus, reaction_time)
+        processed_df = processed_df._append(modified_row, ignore_index=True)
+        code_row = raw_eeg_csv.iloc[i+2]
+        code_row[0] = '254'
+        processed_df = processed_df._append(code_row, ignore_index=True)
     
-    # # # 251 - Oddball - Miss - no hit
-    # elif third_row_value == '251' and first_row_value == str(block_number+150):
-    #     hit_sataus = 0
-    #     reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
-    #     img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
-    #     modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
-    #     processed_df = processed_df._append(modified_row, ignore_index=True)
-        
-    # 252 - Correct - no hit  
-    if third_row_value == '252' and first_row_value == str(block_number):
+    # # 251 - Oddball - Miss - no hit
+    elif third_row_value == '251' and first_row_value == str(block_number+150):
         hit_sataus = 0
         reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
         img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
-        modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
+        modified_row = process_row(raw_eeg_csv.iloc[i], img_idx, hit_sataus, reaction_time)
+        processed_df = processed_df._append(modified_row, ignore_index=True)
+        code_row = raw_eeg_csv.iloc[i+2]
+        code_row[0] = '251'
+        processed_df = processed_df._append(code_row, ignore_index=True)
+        
+    # 252 - Correct - no hit  
+    elif third_row_value == '252' and first_row_value == str(block_number):
+        hit_sataus = 0
+        reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
+        img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
+        modified_row = process_row(raw_eeg_csv.iloc[i], img_idx, hit_sataus, reaction_time)
         processed_df = processed_df._append(modified_row, ignore_index=True)
         code_row = raw_eeg_csv.iloc[i+2]
         code_row[0] = '252'
@@ -88,7 +94,7 @@ while i < raw_eeg_csv.shape[0] - 2:
         hit_sataus = 1
         reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
         img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
-        modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
+        modified_row = process_row(raw_eeg_csv.iloc[i], img_idx, hit_sataus, reaction_time)
         processed_df = processed_df._append(modified_row, ignore_index=True)
         code_row = raw_eeg_csv.iloc[i+2]
         code_row[0] = '253'
