@@ -44,36 +44,44 @@ block_number = 1
 count = 1
 while i < raw_eeg_csv.shape[0] - 2:
     
-    if raw_eeg_csv.iloc[i+1, 0] == '198' and i > 100:
+    # New block, increment block number and add a block code to new csv
+    if raw_eeg_csv.iloc[i, 0] == 'Epoch' and i > 100:
         count += 1 
         block_number += 1
+        i+=3
+        block_row = raw_eeg_csv.iloc[i]
+        block_row[0] = 5000
+        processed_df = processed_df._append(block_row, ignore_index=True)
         
     first_row_value = raw_eeg_csv.iloc[i, 0]
     third_row_value = raw_eeg_csv.iloc[i+2, 0]
 
-    # 254 - Oddball - Correct - hit 
-    if third_row_value == '254' and first_row_value == str(block_number+150):
-        hit_sataus = 1
-        reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
-        img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
-        modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
-        processed_df = processed_df.append(modified_row, ignore_index=True)
+    # # 254 - Oddball - Correct - hit 
+    # if third_row_value == '254' and first_row_value == str(block_number+150):
+    #     hit_sataus = 1
+    #     reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
+    #     img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
+    #     modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
+    #     processed_df = processed_df._append(modified_row, ignore_index=True)
     
-    # # 251 - Oddball - Miss - no hit
-    elif third_row_value == '251' and first_row_value == str(block_number+150):
-        hit_sataus = 0
-        reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
-        img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
-        modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
-        processed_df = processed_df.append(modified_row, ignore_index=True)
+    # # # 251 - Oddball - Miss - no hit
+    # elif third_row_value == '251' and first_row_value == str(block_number+150):
+    #     hit_sataus = 0
+    #     reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
+    #     img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
+    #     modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
+    #     processed_df = processed_df._append(modified_row, ignore_index=True)
         
     # 252 - Correct - no hit  
-    elif third_row_value == '252' and first_row_value == str(block_number):
+    if third_row_value == '252' and first_row_value == str(block_number):
         hit_sataus = 0
         reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
         img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
         modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
-        processed_df = processed_df.append(modified_row, ignore_index=True)
+        processed_df = processed_df._append(modified_row, ignore_index=True)
+        code_row = raw_eeg_csv.iloc[i+2]
+        code_row[0] = '252'
+        processed_df = processed_df._append(code_row, ignore_index=True)
         
     # 253 - False hit 
     elif third_row_value == '253' and first_row_value == str(block_number):
@@ -81,11 +89,14 @@ while i < raw_eeg_csv.shape[0] - 2:
         reaction_time = raw_eeg_csv.iloc[i+2, 2] - raw_eeg_csv.iloc[i, 2]
         img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_csv.iloc[i+1, 0])
         modified_row = process_row(raw_eeg_csv.iloc[i + 2], img_idx, hit_sataus, reaction_time)
-        processed_df = processed_df.append(modified_row, ignore_index=True)
+        processed_df = processed_df._append(modified_row, ignore_index=True)
+        code_row = raw_eeg_csv.iloc[i+2]
+        code_row[0] = '253'
+        processed_df = processed_df._append(code_row, ignore_index=True)
     
     # Jump 3 rows for next trial
     i += 3
 
 # Save data
-final_output_path = file_path.replace('before', 'after').replace('.csv', '_final_processed.csv')
+final_output_path = file_path.replace('before', 'after').replace('.csv', '_preletswave.csv')
 processed_df.to_csv(final_output_path, index=False)
