@@ -41,12 +41,12 @@ processed_df = pd.DataFrame(columns=raw_eeg_csv.columns)
 
 i = 4
 block_number = 1
-count = 1
+
 while i < raw_eeg_csv.shape[0] - 2:
     
     # New block, increment block number and add a block code to new csv
     if raw_eeg_csv.iloc[i, 0] == 'Epoch' and i > 100:
-        count += 1 
+
         block_number += 1
         i+=3
         block_row = raw_eeg_csv.iloc[i]
