@@ -49,9 +49,9 @@ while i < raw_eeg_df.shape[0] - 2:
 
         block_number += 1
         i+=3
-        block_row = raw_eeg_df.iloc[i].copy()
-        block_row.iloc[0] = 50000
-        new_df = new_df._append(block_row, ignore_index=True)
+        # block_row = raw_eeg_df.iloc[i].copy()
+        # block_row.iloc[0] = 50000
+        # new_df = new_df._append(block_row, ignore_index=True)
         
     first_row_value = raw_eeg_df.iloc[i, 0]
     third_row_value = raw_eeg_df.iloc[i+2, 0]
@@ -60,13 +60,13 @@ while i < raw_eeg_df.shape[0] - 2:
     if third_row_value == '254' and first_row_value == str(block_number+block_trigger_offset):
         reaction_time = raw_eeg_df.iloc[i+2, 2] - raw_eeg_df.iloc[i, 2]
         img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_df.iloc[i+1, 0])
-        modified_row = create_new_row(raw_eeg_df.iloc[i], 20000, reaction_time)
+        # modified_row = create_new_row(raw_eeg_df.iloc[i], 20000, reaction_time)
     
     # # 251 - Oddball - Miss - no hit
     elif third_row_value == '251' and first_row_value == str(block_number+block_trigger_offset):
         reaction_time = raw_eeg_df.iloc[i+2, 2] - raw_eeg_df.iloc[i, 2]
         img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_df.iloc[i+1, 0])
-        modified_row = create_new_row(raw_eeg_df.iloc[i], 20000, reaction_time)
+        # modified_row = create_new_row(raw_eeg_df.iloc[i], 20000, reaction_time)
         
     # 252 - Correct - no hit  
     elif third_row_value == '252' and first_row_value == str(block_number):
