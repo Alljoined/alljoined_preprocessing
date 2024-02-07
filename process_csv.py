@@ -11,9 +11,7 @@ parser.add_argument('--session', default=1, type=int)
 parser.add_argument('--data_rootDir', default='eeg_data', type=str)
 args = parser.parse_args()
 
-file_path = os.path.join(args.data_rootDir, 'before',
-    'sub-'+format(args.sub,'02'), 'ses-'+format(args.session,'02'), 
-    'sub-'+format(args.sub,'02')+'_raw.csv')
+file_path = os.path.join(args.data_rootDir, 'before', 'sub-'+format(args.sub)+'_ses-'+format(args.session)+'_raw.csv')
 
 # Print input arguments
 print('\n\n\n>>> Cell Cleaning <<<')
