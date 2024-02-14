@@ -39,6 +39,7 @@ new_df = pd.DataFrame(columns=raw_eeg_df.columns)
 i = 4
 block_number = 1
 block_trigger_offset = 150
+error_count = 0
 
 while i < raw_eeg_df.shape[0] - 2:
     
@@ -79,10 +80,16 @@ while i < raw_eeg_df.shape[0] - 2:
         img_idx = ((block_number - 1) % 8) * 120 + int(raw_eeg_df.iloc[i+1, 0])
         modified_row = create_new_row(raw_eeg_df.iloc[i], img_idx, reaction_time)
         new_df = new_df._append(modified_row, ignore_index=True)
-    
+
+    else:
+        if error_count < 10:
+            error_count += 1
+            print('Error: ', i, raw_eeg_df.iloc[i, 0], raw_eeg_df.iloc[i+2, 0])
+
     # Jump 3 rows for next trial
     i += 3
 
 # Save data
 final_output_path = file_path.replace('before', 'after').replace('raw.csv', 'parsed.csv')
 new_df.to_csv(final_output_path, index=False)
+
