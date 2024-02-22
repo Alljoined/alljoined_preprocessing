@@ -15,9 +15,14 @@ def load_csv_to_list(csv_filepath):
     data = []
     with open(csv_filepath, mode='r', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
-        for row in reader:
-            # Convert the first column to int and keep the second as is (assuming it's already an integer)
-            data.append((int(row[0]), int(row[1])))
+        next(reader, None)
+        for idx, row in enumerate(reader):
+            # Convert the first, second columns to int 
+            if row[0] == '':
+                print(f"Row index: {idx} is blank")
+                continue
+            else:
+                data.append((int(row[0]), int(row[1])))
     return data
 
 
@@ -88,5 +93,5 @@ mat_contents = load_mat_file(mat_file_path)
 
 
 nsd_id = get_nsd_id(mat_contents, 5, 1, 1)
-print(nsd_id)
-print(get_coco_id(csv_data, nsd_id))
+print(f"NSD id: {nsd_id}")
+print(f"COCO id: {get_coco_id(csv_data, nsd_id)}")
