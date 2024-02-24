@@ -1,3 +1,4 @@
 /eeg_data
+/tests/__pycache__
 .DS_Store
 venv
