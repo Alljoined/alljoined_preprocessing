@@ -23,9 +23,6 @@ print(raw._data.shape)
 montage = mne.channels.make_standard_montage('standard_1020')
 raw.set_montage(montage)
 
-# Remove 'Status' channel (Step 8)
-# raw.drop_channels(['Status'])
-
 # Filter data (Step 9)
 raw.filter(l_freq=0.01, h_freq=40, fir_design='firwin')
 raw.notch_filter(freqs=50)
@@ -41,6 +38,10 @@ epochs = mne.Epochs(raw, events, event_id=None, tmin=-0.05, tmax=0.65, preload=T
 # Automated Artifact Rejection (Step 12): Setting threshold to 700 µV
 reject_criteria = dict(eeg=700e-6)  # 700 µV = 700e-6 V
 epochs.drop_bad(reject=reject_criteria)
+
+# Remove 'Status' channel (Step 8). 
+# Removing it here because you need this channel for earlier steps like creating epochs
+raw.drop_channels(['Status'])
 
 # ICA for artifact correction (Steps 14 and 15)
 ica = ICA(n_components=0.95, random_state=97)
