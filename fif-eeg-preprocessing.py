@@ -57,9 +57,3 @@ epochs.apply_baseline(baseline=(-0.05, 0))
 # Saving the preprocessed data
 preprocessed_file_path = os.path.join(output_dir, input_file_name)
 epochs.save(preprocessed_file_path)
-
-# Zipping the preprocessed data (Step 20)
-# with zipfile.ZipFile(os.path.join(output_dir, 'preprocessed_data.zip'), 'w', zipfile.ZIP_DEFLATED) as zipf:
-#     zipf.write(preprocessed_file_path, arcname='preprocessed-epochs.fif')
-
-# print("Preprocessing complete. Data saved and zipped.")
