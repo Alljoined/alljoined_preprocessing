@@ -56,9 +56,3 @@ epochs.apply_baseline(baseline=(-0.05, 0))
 preprocessed_file_path = fif_file_path.replace('fif', 'final_eeg_files')
 os.makedirs(os.path.dirname(preprocessed_file_path), exist_ok=True)
 epochs.save(preprocessed_file_path)
-
-# Zipping the preprocessed data (Step 20)
-# with zipfile.ZipFile(os.path.join(output_dir, 'preprocessed_data.zip'), 'w', zipfile.ZIP_DEFLATED) as zipf:
-#     zipf.write(preprocessed_file_path, arcname='preprocessed-epochs.fif')
-
-# print("Preprocessing complete. Data saved and zipped.")
