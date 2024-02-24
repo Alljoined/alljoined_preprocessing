@@ -2,7 +2,8 @@ import pandas as pd
 
 """ 
 This script is responsible for building the behavioural data
-    portion of the final dataset in the Post-LetsWave6 format
+    portion of the final dataset in the Post-LetsWave6 format.
+    The created table does not have non-oddball, no-press events.
 """
 
 Post_letsWave6_columns = [
@@ -72,16 +73,16 @@ def convert_raw_eeg_to_letswave6(
         # Signal to indicate if a user pressed a key
         trial_user_response_code = trial.iloc[2]["code"]
        
-        # TODO: Charles originally said that it would be trial.iloc[1]
-        #       though there is a discrepancy with other scripts, 
-        #       so for now i'll use trial.iloc[0]
-        curr_time = trial.iloc[0]["onset"] / sample_rate
-        reaction_time = (trial.iloc[2]["onset"] - trial.iloc[0]["onset"]) / sample_rate
+        curr_time = trial.iloc[1]["onset"] / sample_rate
+        reaction_time = (trial.iloc[2]["onset"] - trial.iloc[1]["onset"]) / sample_rate
 
         if trial_block_code == block:
             # Regular trial event is occuring
-            if trial_user_response_code == EVENT_CODES["FALSE_ALARM"]:
+            if trial_user_response_code == EVENT_CODES["CORRECT_REJ"]:
+                continue
+            elif trial_user_response_code == EVENT_CODES["FALSE_ALARM"]:
                 pressed = True
+        
         elif trial_block_code == EVENT_CODES["BLOCK_START"]:
             # New block is starting
             block += 1
