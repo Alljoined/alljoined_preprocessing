@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 """ 
 This script is responsible for building the behavioural data
@@ -6,7 +7,10 @@ This script is responsible for building the behavioural data
     The created table does not have non-oddball, no-press events.
 """
 
-Post_letsWave6_columns = [
+SUBJECT_ID = 4
+SESSION = 2
+
+DATASET_COLUMNS = [
     "subject_id",
     "session",
     "block",
@@ -58,7 +62,7 @@ def convert_raw_eeg_to_letswave6(
     # We skip two rows, one is start signal, second is block start
     inital_rows_to_skip = 2 
     rows_per_trial = 3
-    output = pd.DataFrame(columns=Post_letsWave6_columns)
+    output = pd.DataFrame(columns=DATASET_COLUMNS)
     block = 1
     num_trials = 0
 
@@ -112,10 +116,14 @@ def convert_raw_eeg_to_letswave6(
     return output
 
 if __name__ == "__main__":
-    raw_eeg_df = pd.read_csv("tests/subj04_session2.csv")
+    raw_csv_path = os.path.join("eeg_data", "raw_csv", "subj04_session2.csv")
+    raw_eeg_df = pd.read_csv(raw_csv_path)
     eeg_letswave6 = convert_raw_eeg_to_letswave6(
-        subject_id=4,
-        session=2,
+        subject_id=SUBJECT_ID,
+        session=SESSION,
         raw_eeg_df=raw_eeg_df
     )
-    eeg_letswave6.to_csv("tests/sub04_session2_letswave6.csv", index=False)
+    dataset_csv_path = raw_csv_path.replace("raw_csv", "behavioural_csv")
+    os.makedirs(os.path.dirname(dataset_csv_path), exist_ok=True)
+    eeg_letswave6.to_csv(dataset_csv_path, index=False)
+
