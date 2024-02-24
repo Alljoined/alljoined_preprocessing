@@ -24,15 +24,15 @@ montage = mne.channels.make_standard_montage('standard_1020')
 raw.set_montage(montage)
 
 # Remove 'Status' channel (Step 8)
-raw.drop_channels(['Status'])
+# raw.drop_channels(['Status'])
 
 # Filter data (Step 9)
 raw.filter(l_freq=0.01, h_freq=40, fir_design='firwin')
 raw.notch_filter(freqs=50)
 
 # DC Removal (Step 11) and Linear Detrend (Step 16)
-raw.apply_function(lambda x: x - np.mean(x, axis=1, keepdims=True))
-raw.detrend(order=1)
+raw.apply_function(lambda x: x - np.mean(x))
+scipy.signal.detrend(raw._data, axis=0, type='linear')
 
 # Detect events and Epoching (Step 10)
 events = mne.find_events(raw)
