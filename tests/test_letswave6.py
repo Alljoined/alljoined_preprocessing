@@ -85,8 +85,8 @@ def test_regular_event_false_alarm():
     sample_data = [
         [368, 65536, 65734],
         [637, 0, 201],
-        [1024,0,2],
-        [1280,0,1],
+        [1024,0,1],
+        [1280,0,5],
         [1536,0,253],
     ]
 
@@ -100,6 +100,7 @@ def test_regular_event_false_alarm():
     expected_data = [[subject, session, 1, 1280/rate, False, True, (1536-1280) / rate]]
     expected_df = pd.DataFrame(expected_data, 
                                columns=Post_letsWave6_columns)
+    assert(test_df.equals(expected_df))
 
 def test_block_change():
     subject = 4
