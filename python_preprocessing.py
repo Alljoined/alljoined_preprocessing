@@ -10,12 +10,14 @@ import zipfile
 import numpy as np 
 
 # Setup directories
-output_dir = 'letswave-preprocessing'
+output_dir = 'final_eeg_files'
 os.makedirs(output_dir, exist_ok=True)
 
 # Load the BDF file
-bdf_file_path = 'path/to/your/file.bdf'  # Update this path
-raw = mne.io.read_raw_bdf(bdf_file_path, preload=True)
+fif_file_path = 'create_final_dataset/subj04_session2.fif'  
+input_file_name = os.path.basename(fif_file_path)
+raw = mne.io.read_raw_fif(fif_file_path, preload=True)
+print(raw._data.shape)
 
 # Apply standard montage
 montage = mne.channels.make_standard_montage('standard_1020')
@@ -52,11 +54,11 @@ epochs.set_eeg_reference('average')
 epochs.apply_baseline(baseline=(-0.05, 0))
 
 # Saving the preprocessed data
-preprocessed_file_path = os.path.join(output_dir, 'preprocessed-epochs.fif')
+preprocessed_file_path = os.path.join(output_dir, input_file_name)
 epochs.save(preprocessed_file_path)
 
 # Zipping the preprocessed data (Step 20)
-with zipfile.ZipFile(os.path.join(output_dir, 'preprocessed_data.zip'), 'w', zipfile.ZIP_DEFLATED) as zipf:
-    zipf.write(preprocessed_file_path, arcname='preprocessed-epochs.fif')
+# with zipfile.ZipFile(os.path.join(output_dir, 'preprocessed_data.zip'), 'w', zipfile.ZIP_DEFLATED) as zipf:
+#     zipf.write(preprocessed_file_path, arcname='preprocessed-epochs.fif')
 
-print("Preprocessing complete. Data saved and zipped.")
+# print("Preprocessing complete. Data saved and zipped.")
