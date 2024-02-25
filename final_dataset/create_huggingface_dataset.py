@@ -1,0 +1,43 @@
+import h5py
+import numpy as np
+from PIL import Image
+import pandas as pd
+from datasets import Dataset, load_dataset
+import pandas as pd
+from PIL import Image
+
+
+def fetch_image(coco_id, file_path="stimulus/coco_images_224_float16.hdf5"):
+    with h5py.File(file_path, 'r') as hdf5_file:
+        image_data = (hdf5_file['images'][coco_id-1, ...] * 255).astype(np.uint8)
+        image_data = np.transpose(image_data, (1, 2, 0))  # Transpose to (224, 224, 3)
+        return Image.fromarray(image_data)
+
+# image_example = fetch_image(coco_id=1)
+# image_example.show()  
+
+
+def generate_hf_dataset(df, file_path="stimulus/coco_images_224_float16.hdf5"):
+    for _, row in df.iterrows():
+        image = fetch_image(row['coco_id'], file_path)
+        yield {
+            'EEG': row['eeg'],  # Assuming 'eeg' column is already in the correct format
+            'image': image,
+            'label': row['label'],  # Make sure you have this column or adjust accordingly
+            'subject_id': row['subject_id'],
+            'session': row['session'],
+            'block': row['block'],
+            'trial': row['trial'],
+            '73k_id': row['73k_id'],
+            'coco_id': row['coco_id'],
+            'curr_time': row['curr_time'],
+        }
+
+csv_file_path = 'data.csv'
+df = pd.read_csv(csv_file_path)
+CACHE_DIR = "."
+hf_dataset = Dataset.from_generator(generator=generate_hf_dataset, data=df, cache_dir=CACHE_DIR)
+
+#CACHE_DIR="/mnt/nas/CSC8/HelenZhouLab/HZLNasHD1/Data8/jonathan_tmp/datasets/HCP_2d_hf"
+#dataset = load_dataset(CACHE_DIR)
+#dataset.push_to_hub("jonxuxu/HCP-flat", token=HF_PUSH)
