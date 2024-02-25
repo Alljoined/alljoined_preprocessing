@@ -1,9 +1,13 @@
+import os
 import h5py
 import numpy as np
 from PIL import Image
 import pandas as pd
-from datasets import Dataset
+from datasets import Dataset, load_dataset
+from dotenv import load_dotenv
 
+load_dotenv()
+HF_PUSH = os.getenv("HF_PUSH")
 
 def fetch_image(nsd_id, file_path="stimulus/coco_images_224_float16.hdf5"):
     with h5py.File(file_path, 'r') as hdf5_file:
@@ -33,9 +37,11 @@ def generate_hf_dataset(df, file_path="stimulus/coco_images_224_float16.hdf5"):
 
 csv_file_path = 'data.csv'
 df = pd.read_csv(csv_file_path)
+
+print("Creating hf dataset")
 CACHE_DIR = "."
 hf_dataset = Dataset.from_generator(generator=generate_hf_dataset, gen_kwargs={"df": df}, cache_dir=CACHE_DIR)
 
-#CACHE_DIR="/mnt/nas/CSC8/HelenZhouLab/HZLNasHD1/Data8/jonathan_tmp/datasets/HCP_2d_hf"
-#dataset = load_dataset(CACHE_DIR)
-#dataset.push_to_hub("jonxuxu/HCP-flat", token=HF_PUSH)
+print("Uploading dataset")
+# hf_dataset = load_dataset(CACHE_DIR)
+hf_dataset.push_to_hub("daekun/alljoined_dataset", token=HF_PUSH)
