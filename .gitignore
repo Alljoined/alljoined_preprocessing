@@ -3,3 +3,5 @@
 .DS_Store
 venv
 /raw
+/final_dataset/nsd_coco_conversion.csv
+/final_dataset/nsd_expdesign.mat

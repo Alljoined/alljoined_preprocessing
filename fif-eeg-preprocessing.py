@@ -7,15 +7,16 @@ from mne.preprocessing import ICA
 import os
 import scipy.signal
 import numpy as np 
+import argparse
 
-
-input_file = 'subj04_session2.fif'
+parser = argparse.ArgumentParser(description='Preprocess EEG data')
+parser.add_argument('input_file', type=str, help='Input file name', default='subj04_session2.fif')
+args = parser.parse_args()
 
 # Load the BDF file
-fif_file_path = os.path.join('eeg_data', 'fif', input_file) 
-input_file_name = os.path.basename(fif_file_path)
+fif_file_path = os.path.join('eeg_data', 'fif', args.input_file) 
 raw = mne.io.read_raw_fif(fif_file_path, preload=True)
-print(raw._data.shape)
+# print(raw._data.shape)
 
 # Apply standard montage
 montage = mne.channels.make_standard_montage('standard_1020')
@@ -53,6 +54,6 @@ epochs.set_eeg_reference('average')
 epochs.apply_baseline(baseline=(-0.05, 0))
 
 # Saving the preprocessed data
-preprocessed_file_path = fif_file_path.replace('fif', 'final_eeg_files')
+preprocessed_file_path = os.path.join('eeg_data', 'final_eeg', args.input_file)
 os.makedirs(os.path.dirname(preprocessed_file_path), exist_ok=True)
 epochs.save(preprocessed_file_path)
