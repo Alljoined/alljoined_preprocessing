@@ -16,7 +16,6 @@ args = parser.parse_args()
 # Load the BDF file
 fif_file_path = os.path.join('eeg_data', 'fif', args.input_file) 
 raw = mne.io.read_raw_fif(fif_file_path, preload=True)
-# print(raw._data.shape)
 
 # Apply standard montage
 montage = mne.channels.make_standard_montage('standard_1020')
@@ -35,6 +34,7 @@ events = mne.find_events(raw)
 epochs = mne.Epochs(raw, events, event_id=None, tmin=-0.05, tmax=0.65, preload=True)
 
 # Automated Artifact Rejection (Step 12): Setting threshold to 700 µV
+# todo: check also for -700e-6
 reject_criteria = dict(eeg=700e-6)  # 700 µV = 700e-6 V
 epochs.drop_bad(reject=reject_criteria)
 
@@ -43,6 +43,8 @@ epochs.drop_bad(reject=reject_criteria)
 raw.drop_channels(['Status'])
 
 # ICA for artifact correction (Steps 14 and 15)
+# As is typically done with ICA, the data are first scaled to unit variance and whitened using principal components analysis (PCA)
+# before performing the ICA decomposition. It uses the # of components needed to explain 95% of the variance
 ica = ICA(n_components=0.95, random_state=97)
 ica.fit(epochs)
 ica.apply(epochs)
@@ -51,6 +53,7 @@ ica.apply(epochs)
 epochs.set_eeg_reference('average')
 
 # Baseline correction (Step 18)
+# Baseline correction before ICA is not recommended by the MNE-Python developers, as it doesn’t guarantee optimal results.
 epochs.apply_baseline(baseline=(-0.05, 0))
 
 # Saving the preprocessed data
