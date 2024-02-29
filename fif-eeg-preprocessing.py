@@ -22,41 +22,40 @@ montage = mne.channels.make_standard_montage('standard_1020')
 raw.set_montage(montage)
 
 # Filter data (Step 9)
-raw.filter(l_freq=0.01, h_freq=40, fir_design='firwin')
-raw.notch_filter(freqs=50)
+# experiment with 0.5/125, 55/95, 14/70, 5/95
+raw.filter(l_freq=0.5, h_freq=125)
+raw.notch_filter(freqs=60)
 
-# DC Removal (Step 11) and Linear Detrend (Step 16)
-raw.apply_function(lambda x: x - np.mean(x))
-scipy.signal.detrend(raw._data, axis=0, type='linear')
+# ICA for artifact correction (Steps 14 and 15)
+# As is typically done with ICA, the data are first scaled to unit variance and whitened using principal components analysis (PCA)
+# before performing the ICA decomposition. It uses the # of components needed to explain 95% of the variance
+ica = ICA(n_components=0.95, random_state=97)
+ica.fit(raw)
+ica.exclude = [1]
+ica.apply(raw)
 
 # Detect events and Epoching (Step 10)
 events = mne.find_events(raw)
-epochs = mne.Epochs(raw, events, event_id=None, tmin=-0.05, tmax=0.65, preload=True)
+epochs = mne.Epochs(raw, events, event_id=None, tmin=-0.05, tmax=0.60, preload=True)
 
 # Automated Artifact Rejection (Step 12): Setting threshold to 700 µV
 # todo: check also for -700e-6
-reject_criteria = dict(eeg=700e-6)  # 700 µV = 700e-6 V
+reject_criteria = dict(eeg=700e-6)  # 700 µV max peak to peak signal amplitude
 epochs.drop_bad(reject=reject_criteria)
 
 # Remove 'Status' channel (Step 8). 
 # Removing it here because you need this channel for earlier steps like creating epochs
 raw.drop_channels(['Status'])
 
-# ICA for artifact correction (Steps 14 and 15)
-# As is typically done with ICA, the data are first scaled to unit variance and whitened using principal components analysis (PCA)
-# before performing the ICA decomposition. It uses the # of components needed to explain 95% of the variance
-ica = ICA(n_components=0.95, random_state=97)
-ica.fit(epochs)
-ica.apply(epochs)
-
 # Rereferencing (Step 17)
 epochs.set_eeg_reference('average')
 
 # Baseline correction (Step 18)
 # Baseline correction before ICA is not recommended by the MNE-Python developers, as it doesn’t guarantee optimal results.
-epochs.apply_baseline(baseline=(-0.05, 0))
+epochs.apply_baseline(baseline=(-0.05, 0)) # look at time interval from 50ms from start to 0 seconds from start
 
 # Saving the preprocessed data
-preprocessed_file_path = os.path.join('eeg_data', 'final_eeg', args.input_file)
+root_name = os.path.splitext(args.input_file)[0][:-4]
+preprocessed_file_path = os.path.join('eeg_data', 'final_eeg', f"{root_name}_epo.fif" )
 os.makedirs(os.path.dirname(preprocessed_file_path), exist_ok=True)
 epochs.save(preprocessed_file_path)
