@@ -3,6 +3,7 @@ from scipy.io import loadmat
 import mne
 import pandas as pd
 import os
+import glob 
 
 
 def load_csv_to_list(csv_filepath):
@@ -163,15 +164,46 @@ def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_con
     return dataset_df
 
 
-conversion_csv_filepath = '../create_final_dataset/nsd_coco_conversion.csv'  
+def process_all_datasets(eeg_fiff_folder, eeg_csv_folder, conversion_csv_data, nsd_mat_contents):
+    # Find all FIFF files in the final_eeg folder
+    fiff_files = glob.glob(f'{eeg_fiff_folder}/subj*_session*.fif')
+    
+    all_datasets = []  # List to hold all individual datasets
+
+    for fiff_file_path in fiff_files:
+        # Construct the corresponding CSV file path based on the FIFF file name
+        base_name = os.path.basename(fiff_file_path)
+        csv_file_name = base_name.replace('.fif', '.csv')
+        eeg_csv_file_path = os.path.join(eeg_csv_folder, csv_file_name)
+
+        # Generate the dataset
+        dataset = generate_dataset(fiff_file_path, eeg_csv_file_path, conversion_csv_data, nsd_mat_contents)
+
+        # Append the dataset to the list if it's not empty
+        if not dataset.empty:
+            all_datasets.append(dataset)
+        else:
+            print(f"Dataset for {fiff_file_path} is empty and was not included.")
+
+    # Concatenate all datasets into one DataFrame
+    combined_dataset = pd.concat(all_datasets, ignore_index=True)
+
+    # Save the combined dataset to a CSV file
+    output_csv_path = os.path.join(eeg_csv_folder, '../combined_dataset.csv')
+    combined_dataset.to_csv(output_csv_path, index=False)
+    print(f"Combined dataset saved to {output_csv_path}")
+
+
+# Define the paths
+eeg_fiff_folder = '../eeg_data/final_eeg'
+eeg_csv_folder = '../eeg_data/raw_csv'
+
+# Load conversion CSV data and .mat contents outside the loop to avoid reloading for each file
+conversion_csv_filepath = 'nsd_coco_conversion.csv'  
 conversion_csv_data = load_csv_to_list(conversion_csv_filepath)
 
-nsd_mat_file_path = '../create_final_dataset/nsd_expdesign.mat'
+nsd_mat_file_path = 'nsd_expdesign.mat'
 nsd_mat_contents = load_mat_file(nsd_mat_file_path)
 
-eeg_fiff_file_path = '../final_eeg_files/subj04_session2.fif'
-eeg_csv_file_path = '../subj04_session2.csv'
-
-dataset = generate_dataset(eeg_fiff_file_path, eeg_csv_file_path, conversion_csv_data, nsd_mat_contents)
-dataset.to_csv('final_dataset_subj04_session2.csv', index=False)
-
+# Process all datasets
+process_all_datasets(eeg_fiff_folder, eeg_csv_folder, conversion_csv_data, nsd_mat_contents)
