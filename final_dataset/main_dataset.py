@@ -163,15 +163,15 @@ def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_con
     return dataset_df
 
 
-conversion_csv_filepath = 'nsd_coco_conversion.csv'  
+conversion_csv_filepath = '../create_final_dataset/nsd_coco_conversion.csv'  
 conversion_csv_data = load_csv_to_list(conversion_csv_filepath)
 
-nsd_mat_file_path = 'nsd_expdesign.mat'
+nsd_mat_file_path = '../create_final_dataset/nsd_expdesign.mat'
 nsd_mat_contents = load_mat_file(nsd_mat_file_path)
 
 eeg_fiff_file_path = '../final_eeg_files/subj04_session2.fif'
 eeg_csv_file_path = '../subj04_session2.csv'
 
 dataset = generate_dataset(eeg_fiff_file_path, eeg_csv_file_path, conversion_csv_data, nsd_mat_contents)
-dataset.to_csv('final_dataset.csv', index=False)
+dataset.to_csv('final_dataset_subj04_session2.csv', index=False)
 
