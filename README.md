@@ -30,7 +30,9 @@ Below is a description of the main files and directories:
    2. Move them to /eeg_data/bdf
 2. Run the first part of parse-bdf-event-codes-to-fif.ipynb to retrieve stimulus data
 3. Run the second part of parse-bdf-event-codes-to-fif.ipynb to merge the double trigger data into a combined format. We use double trigger because BioSemi only support 8 bits.
+   1. The script may come across a phantom event, in the a format like `Error in line 10: 101 254`. Navigate to that line to resolve the issues around that line.
 4. Run the third part of parse-bdf-event-codes-to-fif.ipynb to convert parsed_csv to fif format.
+5. Upload the preprocessed .fif file to https://drive.google.com/drive/u/0/folders/1gI9csmnCwedRrlDoRy-jCqK4bclVN6mD.
 
 We need to create a dataset for each of the frequency ranges: 0.5/125, 55/95, 14/70, 5/95. You should have been assigned one of these four to continue.
 
