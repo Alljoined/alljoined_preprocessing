@@ -47,7 +47,7 @@ Current assignments:
    Then modify the path and replace low, high with actual values. For 0.5, use 05:
    preprocessed_file_path = os.path.join('eeg_data', 'final_eeg_low_high', f"{root_name}\_epo.fif" )
    ex. preprocessed_file_path = os.path.join('eeg_data', 'final_eeg_05_125', f"{root_name}\_epo.fif" )
-2. Run fif-eeg-preprocessing.py to preprocess the .fif data. This performs band filtering, epoch detection, PCA, eye blink removal, and baseline correction.
+2. Run fif-eeg-preprocessing.py to preprocess the .fif data. This performs band filtering, epoch detection, PCA, eye blink removal, and baseline correction. The output is saved in /eeg_data/final_eeg.
 3. Change eeg_fif_folder to the correct one in final_dataset/main_dataset.py, on this line:
    eeg_fif_folder = '../eeg_data/final_eeg'
    Then change output_csv_path to point to also include the frequency range in the name:
