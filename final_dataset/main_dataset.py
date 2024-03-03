@@ -4,6 +4,8 @@ import mne
 import pandas as pd
 import os
 
+ROOT_PATH = "/Users/jonathan/Documents/coding/alljoined/alljoined_preprocessing"
+
 
 def load_csv_to_list(csv_filepath):
     """
@@ -122,14 +124,14 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
 
     dataset = []
 
-    for i, epoch in enumerate(epochs):
+    for i, event in enumerate(epochs.events):
         trial = i + 1
         block = trial // 240 + 1  # 240 trials per block
 
         # Extract EEG data for the trial
-        eeg_data = epoch.get_data(copy=False)  # Extracting EEG data for the ith trial
-        onset = epoch.events[0][0]
-        image_id = epoch.events[0][2]
+        eeg_data = epochs[i].get_data(copy=False)  # Extracting EEG data for the ith trial
+        onset = event[0]
+        image_id = event[2]
 
         # Extract other attributes
         nsd_id = get_nsd_id(mat_contents, subject, session, image_id)
@@ -153,14 +155,14 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
     return dataset_df
 
 
-conversion_csv_filepath = '../create_final_dataset/nsd_coco_conversion.csv'  
+conversion_csv_filepath = os.path.join(ROOT_PATH, 'final_dataset/nsd_coco_conversion.csv')
 conversion_csv_data = load_csv_to_list(conversion_csv_filepath)
 
-nsd_mat_file_path = '../create_final_dataset/nsd_expdesign.mat'
+nsd_mat_file_path =  os.path.join(ROOT_PATH, 'final_dataset/nsd_expdesign.mat')
 nsd_mat_contents = load_mat_file(nsd_mat_file_path)
 
-eeg_fiff_file_path = '../final_eeg_files/subj04_session2.fif'
+eeg_fiff_file_path = os.path.join(ROOT_PATH, 'eeg_data/final_eeg/05_125/subj04_session2_epo.fif')
 
 dataset = generate_dataset(eeg_fiff_file_path, conversion_csv_data, nsd_mat_contents)
-dataset.to_csv('final_dataset_subj04_session2.csv', index=False)
+dataset.to_csv('data/final_dataset_subj04_session2.csv', index=False)
 
