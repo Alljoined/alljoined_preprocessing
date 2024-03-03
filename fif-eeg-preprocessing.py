@@ -12,7 +12,7 @@ import argparse
 # experiment with 0.5/125, 55/95, 14/70, 5/95
 LOW_FREQ = 0.5
 HI_FREQ = 125
-output_path = os.path.join('eeg_data', 'final_eeg', str(LOW_FREQ).replace('.', ''), HI_FREQ)
+output_path = os.path.join('eeg_data', 'final_eeg', str(LOW_FREQ).replace('.', '') + "_" + str(HI_FREQ))
 
 parser = argparse.ArgumentParser(description='Preprocess EEG data')
 parser.add_argument('input_file', type=str, help='Input file name', default='subj04_session2.fif')
