@@ -3,11 +3,13 @@ import h5py
 import numpy as np
 from PIL import Image
 import pandas as pd
-from datasets import Dataset, load_dataset
+from datasets import Dataset
 from dotenv import load_dotenv
 
 load_dotenv()
 # HF_PUSH = os.getenv("HF_PUSH")
+
+DATASET_PATH = '../combined_dataset.csv'
 
 def fetch_image(nsd_id, file_path="stimulus/coco_images_224_float16.hdf5"):
     with h5py.File(file_path, 'r') as hdf5_file:
@@ -31,8 +33,7 @@ def generate_hf_dataset(df, file_path="stimulus/coco_images_224_float16.hdf5"):
             'curr_time': row['curr_time'],
         }
 
-csv_file_path = 'final_dataset_subj04_session2.csv'
-df = pd.read_csv(csv_file_path)
+df = pd.read_csv(DATASET_PATH)
 
 print("Creating hf dataset")
 CACHE_DIR = "."

@@ -60,7 +60,7 @@ def get_nsd_id(mat_contents, subject, session, id):
     - Image ID corresponding to the specified subject, session, and id.
     """
 
-    if subject % 2 == 0:  # For even subjects, use shared images
+    if session % 2 == 0:  # For even subjects, use shared images
         indices = mat_contents['sharedix'][0]
     else:
         indices = mat_contents['subjectim'][subject - 1]  # Adjust for 0-indexing
@@ -164,6 +164,7 @@ def process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents)
 
     for file in os.listdir(fif_files):
         # Generate the dataset
+        print("generating for file", file)
         dataset = generate_dataset(os.path.join(fif_files, file), conversion_csv_data, nsd_mat_contents)
 
         # Append the dataset to the list if it's not empty
@@ -176,7 +177,7 @@ def process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents)
     combined_dataset = pd.concat(all_datasets, ignore_index=True)
 
     # Save the combined dataset to a CSV file
-    output_csv_path = os.path.join(eeg_data_folder, '/combined_dataset.csv')
+    output_csv_path = os.path.join(eeg_data_folder, 'combined_dataset.csv')
     combined_dataset.to_csv(output_csv_path, index=False)
     print(f"Combined dataset saved to {output_csv_path}")
 
