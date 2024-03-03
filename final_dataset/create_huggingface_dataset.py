@@ -3,7 +3,7 @@ import h5py
 import numpy as np
 from PIL import Image
 import pandas as pd
-from datasets import Dataset
+from datasets import Dataset, load_dataset
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -37,7 +37,7 @@ def generate_hf_dataset(df, file_path=COCO_PATH):
 df = pd.read_csv(DATASET_PATH)
 
 print("Creating hf dataset")
-CACHE_DIR = "."
+CACHE_DIR = "huggingface"
 hf_dataset = Dataset.from_generator(generator=generate_hf_dataset, gen_kwargs={"df": df}, cache_dir=CACHE_DIR)
 
 # print("Uploading dataset")

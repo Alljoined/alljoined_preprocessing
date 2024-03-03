@@ -7,5 +7,5 @@ venv
 /final_dataset/nsd_expdesign.mat
 /final_dataset/data/*
 /final_dataset/stimulus/*
-/final_dataset/generator
-/final_dataset/generator_*
+/final_dataset/huggingface/*
+.env

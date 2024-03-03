@@ -1,5 +1,6 @@
 name: ajpreproc
 channels:
+  - huggingface
   - conda-forge
   - defaults
 dependencies:
@@ -14,6 +15,19 @@ dependencies:
   - asttokens=2.4.1=pyhd8ed1ab_0
   - async-lru=2.0.4=pyhd8ed1ab_0
   - attrs=23.2.0=pyh71513ae_0
+  - aws-c-auth=0.7.16=h51b92d1_6
+  - aws-c-cal=0.6.10=hf888d4c_1
+  - aws-c-common=0.9.13=h93a5062_0
+  - aws-c-compression=0.2.18=hf888d4c_1
+  - aws-c-event-stream=0.4.2=h1b95c93_4
+  - aws-c-http=0.8.1=heb97226_5
+  - aws-c-io=0.14.5=hb51f26e_1
+  - aws-c-mqtt=0.10.2=hd37591b_4
+  - aws-c-s3=0.5.2=h09f5dbc_0
+  - aws-c-sdkutils=0.1.15=hf888d4c_1
+  - aws-checksums=0.1.18=hf888d4c_1
+  - aws-crt-cpp=0.26.2=h06549c9_7
+  - aws-sdk-cpp=1.11.267=h73c0887_1
   - babel=2.14.0=pyhd8ed1ab_0
   - beautifulsoup4=4.12.3=pyha770c72_0
   - bleach=6.1.0=pyhd8ed1ab_0
@@ -39,12 +53,15 @@ dependencies:
   - contourpy=1.2.0=py312h76e736e_0
   - cycler=0.12.1=pyhd8ed1ab_0
   - darkdetect=0.8.0=pyhd8ed1ab_0
+  - dataclasses=0.8=pyhc8e2a94_3
+  - datasets=2.16.1=py_0
   - dav1d=1.2.1=hb547adb_0
   - debugpy=1.8.1=py312h20a0b95_0
   - decorator=5.1.1=pyhd8ed1ab_0
   - deepdiff=6.7.1=pyhd8ed1ab_0
   - defusedxml=0.7.1=pyhd8ed1ab_0
   - deprecated=1.2.14=pyh1a96a4e_0
+  - dill=0.3.8=pyhd8ed1ab_0
   - dipy=1.8.0=py312h88edd18_1
   - double-conversion=3.3.0=h13dd4ca_0
   - edflib-python=1.0.8=pyhd8ed1ab_0
@@ -71,11 +88,13 @@ dependencies:
   - fsspec=2024.2.0=pyhca7485f_0
   - future=0.18.3=pyhd8ed1ab_0
   - gettext=0.21.1=h0186832_0
+  - gflags=2.2.2=hc88da5d_1004
   - giflib=5.2.1=h1a8c8d9_3
   - gl2ps=1.4.2=h17b34a0_0
   - glew=2.1.0=h9f76cd9_2
   - glib=2.78.4=h1059232_0
   - glib-tools=2.78.4=h1059232_0
+  - glog=0.7.0=hc6770e3_0
   - gmp=6.3.0=h965bd2d_0
   - gnutls=3.7.9=hd26332c_0
   - graphite2=1.3.13=h9f76cd9_1001
@@ -135,6 +154,13 @@ dependencies:
   - lerc=4.0.0=h9a09cb3_0
   - libabseil=20230802.1=cxx17_h13dd4ca_0
   - libaec=1.1.2=h13dd4ca_1
+  - libarrow=15.0.0=h4f70cd7_6_cpu
+  - libarrow-acero=15.0.0=hebf3989_6_cpu
+  - libarrow-dataset=15.0.0=hebf3989_6_cpu
+  - libarrow-flight=15.0.0=hef2a8c6_6_cpu
+  - libarrow-flight-sql=15.0.0=h611cb26_6_cpu
+  - libarrow-gandiva=15.0.0=h5211482_6_cpu
+  - libarrow-substrait=15.0.0=h2e851bb_6_cpu
   - libass=0.17.1=hf7da4fe_1
   - libavif16=1.0.4=h76840f6_0
   - libblas=3.9.0=21_osxarm64_openblas
@@ -144,16 +170,21 @@ dependencies:
   - libcblas=3.9.0=21_osxarm64_openblas
   - libclang=15.0.7=default_hd209bcb_4
   - libclang13=15.0.7=default_ha49e599_4
+  - libcrc32c=1.1.2=hbdafb3b_0
   - libcurl=8.5.0=h2d989ff_0
   - libcxx=16.0.6=h4653b0c_0
   - libdeflate=1.19=hb547adb_0
   - libedit=3.1.20191231=hc8eb9b7_2
   - libev=4.33=h93a5062_2
+  - libevent=2.1.12=h2757513_1
   - libexpat=2.5.0=hb7217d7_1
   - libffi=3.4.2=h3422bc3_5
   - libgfortran=5.0.0=13_2_0_hd922786_3
   - libgfortran5=13.2.0=hf226fd6_3
   - libglib=2.78.4=h1635a5e_0
+  - libgoogle-cloud=2.17.0=hfb9b341_2
+  - libgoogle-cloud-storage=2.17.0=h8a76758_2
+  - libgrpc=1.60.1=hfc68871_0
   - libhwloc=2.9.3=default_h4394839_1009
   - libiconv=1.17=h0d3ecfb_2
   - libidn2=2.3.7=h93a5062_0
@@ -161,6 +192,7 @@ dependencies:
   - liblapack=3.9.0=21_osxarm64_openblas
   - libllvm14=14.0.6=hd1a9a77_4
   - libllvm15=15.0.7=h2621b3d_4
+  - libllvm16=16.0.6=haab561b_3
   - libmatio=1.5.26=h3b23503_0
   - libnetcdf=4.9.2=nompi_h291a7c2_113
   - libnghttp2=1.58.0=ha4dd798_1
@@ -178,16 +210,20 @@ dependencies:
   - libopenvino-tensorflow-frontend=2023.3.0=hb5ee477_0
   - libopenvino-tensorflow-lite-frontend=2023.3.0=hebf3989_0
   - libopus=1.3.1=h27ca646_1
+  - libparquet=15.0.0=h278d484_6_cpu
   - libpng=1.6.42=h091b4b1_0
   - libpq=16.2=h0f8b458_0
   - libprotobuf=4.25.1=h810fc01_2
+  - libre2-11=2023.09.01=h741fcf5_1
   - libsodium=1.0.18=h27ca646_1
   - libsqlite=3.45.1=h091b4b1_0
   - libssh2=1.11.0=h7a5bd25_0
   - libtasn1=4.19.0=h1a8c8d9_0
   - libtheora=1.1.1=h3422bc3_1005
+  - libthrift=0.19.0=h026a170_1
   - libtiff=4.6.0=ha8a6c65_2
   - libunistring=0.9.10=h3422bc3_0
+  - libutf8proc=2.8.0=h1a8c8d9_0
   - libvorbis=1.3.7=h9f76cd9_0
   - libvpx=1.13.1=hb765f3a_0
   - libwebp-base=1.3.2=hb547adb_0
@@ -213,6 +249,7 @@ dependencies:
   - mne-qt-browser=0.6.1=pyha770c72_0
   - more-itertools=10.2.0=pyhd8ed1ab_0
   - multidict=6.0.5=py312h670c8ac_0
+  - multiprocess=0.70.16=py312he37b823_0
   - munkres=1.1.4=pyh9f0ad1d_0
   - mysql-common=8.0.33=hf9e6398_6
   - mysql-libs=8.0.33=he3dca8b_6
@@ -239,6 +276,7 @@ dependencies:
   - openjpeg=2.5.0=h4c1507b_3
   - openmeeg=2.5.7=py312hcffd864_0
   - openssl=3.2.1=h0d3ecfb_0
+  - orc=1.9.2=hb41d57e_1
   - ordered-set=4.1.0=pyhd8ed1ab_0
   - orjson=3.9.10=py312h37b1423_0
   - overrides=7.7.0=pyhd8ed1ab_0
@@ -269,6 +307,8 @@ dependencies:
   - pugixml=1.14=h13dd4ca_0
   - pure_eval=0.2.2=pyhd8ed1ab_0
   - py-cpuinfo=9.0.0=pyhd8ed1ab_0
+  - pyarrow=15.0.0=py312h1251918_6_cpu
+  - pyarrow-hotfix=0.6=pyhd8ed1ab_0
   - pycparser=2.21=pyhd8ed1ab_0
   - pygments=2.17.2=pyhd8ed1ab_0
   - pymatreader=0.0.32=pyhd8ed1ab_0
@@ -283,10 +323,12 @@ dependencies:
   - pytables=3.9.2=py312h9aef7b8_1
   - python=3.12.2=hdf0ec26_0_cpython
   - python-dateutil=2.8.2=pyhd8ed1ab_0
+  - python-dotenv=1.0.1=pyhd8ed1ab_0
   - python-fastjsonschema=2.19.1=pyhd8ed1ab_0
   - python-json-logger=2.0.7=pyhd8ed1ab_0
   - python-picard=0.7=pyh8a188c0_0
   - python-tzdata=2024.1=pyhd8ed1ab_0
+  - python-xxhash=3.4.1=py312h02f2b3b_0
   - python_abi=3.12=4_cp312
   - pytz=2024.1=pyhd8ed1ab_0
   - pyvista=0.43.3=pyhd8ed1ab_0
@@ -299,6 +341,7 @@ dependencies:
   - qtconsole-base=5.5.1=pyha770c72_0
   - qtpy=2.4.1=pyhd8ed1ab_0
   - rav1e=0.6.6=h69fbcac_2
+  - re2=2023.09.01=h4cba328_1
   - readline=8.2=h92ec313_1
   - referencing=0.33.0=pyhd8ed1ab_0
   - requests=2.31.0=pyhd8ed1ab_0
@@ -375,6 +418,7 @@ dependencies:
   - xmltodict=0.13.0=pyhd8ed1ab_0
   - xorg-libxau=1.0.11=hb547adb_0
   - xorg-libxdmcp=1.1.3=h27ca646_0
+  - xxhash=0.8.2=hb547adb_0
   - xz=5.2.6=h57fd34a_0
   - yaml=0.2.5=h3422bc3_2
   - yarl=1.9.4=py312he37b823_0

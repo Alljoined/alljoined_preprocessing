@@ -32,6 +32,7 @@ Below is a description of the main files and directories:
         ├── download_coco.py            # Script that downloads coco images used in our dataset
         ├── data/                       # Folder for downloaded coco images
         ├── behavioural_dataset.py      #
+        ├── huggingface/                # Huggingface cache dir for our new dataset
     └── README.md           # The file you're reading now
 
 ## Preprocessing pipeline
@@ -68,4 +69,5 @@ Current assignments:
 4. Run final_dataset/main_dataset.py to create a csv of all the data for that frequency range
 5. Download the coco images by running final_dataset/download_coco.py. This file is 22 gigabytes in size.
 6. Update csv_file_path to the csv path you create above in final_dataset/create_huggingface_dataset.py
-7. Run final_dataset/create_huggingface_dataset.py to create and upload the dataset
+7. Run final_dataset/create_huggingface_dataset.py to create the huggingface dataset
+8. Create .env file, set HF_PUSH to your hugginface access token, and then run upload.py to upload your huggingface dataset
