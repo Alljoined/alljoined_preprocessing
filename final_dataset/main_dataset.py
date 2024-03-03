@@ -94,16 +94,12 @@ def load_fiff_epochs(fiff_file_path):
     Returns:
     - epochs: Loaded MNE epochs object.
     """
-    try:
-        epochs = mne.read_epochs(fiff_file_path, preload=True)
-        print("Epochs loaded successfully.")
-        return epochs
-    except Exception as e:
-        print(f"Failed to load epochs from file {fiff_file_path}: {e}")
-        return None
+    epochs = mne.read_epochs(fiff_file_path, preload=True)
+    print("Epochs loaded successfully.")
+    return epochs
 
 
-def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_contents):
+def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
     """
     Generates a dataset by combining EEG data with image IDs and timing information.
 
@@ -117,13 +113,6 @@ def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_con
     - A pandas DataFrame containing the combined dataset.
     """
     epochs = load_fiff_epochs(fiff_file_path)
-    if epochs is None:
-        return pd.DataFrame()  # Return an empty DataFrame in case of failure
-
-    csv_data = pd.read_csv(csv_file_path)
-
-    if len(epochs) != len(csv_data):
-        print(f"Warning: The number of epochs ({len(epochs)}) does not match the number of trials ({len(csv_data)}).")
 
     # Extract subject and session from FIFF file name
     base_name = os.path.basename(fiff_file_path)
@@ -134,18 +123,19 @@ def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_con
 
     dataset = []
 
-    for i, row in csv_data.iterrows():
+    for i, epoch in enumerate(epochs):
         trial = i + 1
-        # 240 trials per block
-        block = trial // 240 + 1  
+        block = trial // 240 + 1  # 240 trials per block
 
         # Extract EEG data for the trial
-        eeg_data = epochs[i].get_data(copy=False)  # Extracting EEG data for the ith trial
+        eeg_data = epoch.get_data(copy=False)  # Extracting EEG data for the ith trial
+        onset = epoch.events[0][0]
+        image_id = epoch.events[0][2]
 
         # Extract other attributes
-        nsd_id = get_nsd_id(mat_contents, subject, session, row['code'])
-        coco_id = get_coco_id(conversion_csv_data, row['code']-1)
-        curr_time = row['onset'] / 512 if 'onset' in row else None
+        nsd_id = get_nsd_id(mat_contents, subject, session, image_id)
+        coco_id = get_coco_id(conversion_csv_data, image_id-1)
+        curr_time = onset / 512
 
         # Append to the dataset
         dataset.append({

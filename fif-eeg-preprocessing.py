@@ -9,6 +9,11 @@ import scipy.signal
 import numpy as np 
 import argparse
 
+# experiment with 0.5/125, 55/95, 14/70, 5/95
+LOW_FREQ = 0.5
+HI_FREQ = 125
+output_path = os.path.join('eeg_data', 'final_eeg', str(LOW_FREQ).replace('.', '') + "_" + str(HI_FREQ))
+
 parser = argparse.ArgumentParser(description='Preprocess EEG data')
 parser.add_argument('input_file', type=str, help='Input file name', default='subj04_session2.fif')
 args = parser.parse_args()
@@ -22,8 +27,7 @@ montage = mne.channels.make_standard_montage('standard_1020')
 raw.set_montage(montage)
 
 # Filter data (Step 9)
-# experiment with 0.5/125, 55/95, 14/70, 5/95
-raw.filter(l_freq=0.5, h_freq=125)
+raw.filter(l_freq=LOW_FREQ, h_freq=HI_FREQ)
 raw.notch_filter(freqs=60)
 
 # ICA for artifact correction (Steps 14 and 15)
@@ -56,6 +60,6 @@ epochs.apply_baseline(baseline=(-0.05, 0)) # look at time interval from 50ms fro
 
 # Saving the preprocessed data
 root_name = os.path.splitext(args.input_file)[0][:-4]
-preprocessed_file_path = os.path.join('eeg_data', 'final_eeg', f"{root_name}_epo.fif" )
+preprocessed_file_path = os.path.join(output_path, f"{root_name}_epo.fif" )
 os.makedirs(os.path.dirname(preprocessed_file_path), exist_ok=True)
 epochs.save(preprocessed_file_path)
