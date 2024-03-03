@@ -5,7 +5,6 @@ from PIL import Image
 import pandas as pd
 from datasets import Features, Dataset, Sequence, Value, Image as DatasetsImage
 from dotenv import load_dotenv
-import re
 
 
 DSET_NAME = "05_125"
@@ -37,11 +36,20 @@ def generate_hf_dataset(df, file_path=COCO_PATH):
             'curr_time': row['curr_time'],
         }
 
-        break
-
 df = pd.read_hdf(DATASET_PATH, key="df")
 
 print("Creating hf dataset")
-hf_dataset = Dataset.from_generator(generator=generate_hf_dataset, gen_kwargs={"df": df}, cache_dir="huggingface")
+hf_dataset = Dataset.from_generator(generator=generate_hf_dataset, gen_kwargs={"df": df}, features=Features({
+    'EEG': Sequence(feature=Sequence(feature=Value('float64'))),
+    'image': DatasetsImage(),
+    'subject_id': Value('int32'),
+    'session': Value('int32'),
+    'block': Value('int32'),
+    'trial': Value('int32'),
+    '73k_id': Value('int32'),
+    'coco_id': Value('int32'),
+    'curr_time': Value('float32'),
+}), cache_dir="huggingface")
+
 
 hf_dataset.push_to_hub("Alljoined/" + DSET_NAME, token=HF_PUSH)

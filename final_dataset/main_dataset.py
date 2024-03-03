@@ -3,7 +3,6 @@ from scipy.io import loadmat
 import mne
 import pandas as pd
 import os
-import pickle
 
 ROOT_PATH = "/Users/jonathan/Documents/coding/alljoined/alljoined_preprocessing"
 LO_HI = "05_125"
