@@ -6,8 +6,9 @@ import pandas as pd
 from datasets import Dataset, load_dataset
 from dotenv import load_dotenv
 
+DSET_NAME = "05_125"
 load_dotenv()
-# HF_PUSH = os.getenv("HF_PUSH")
+HF_PUSH = os.getenv("HF_PUSH")
 
 DATASET_PATH = '../eeg_data/combined_dataset.csv'
 COCO_PATH = 'stimulus/datasets--pscotti--mindeyev2/snapshots/183269ab73b49d2fa10b5bfe077194992934e4e6/coco_images_224_float16.hdf5'
@@ -37,9 +38,5 @@ def generate_hf_dataset(df, file_path=COCO_PATH):
 df = pd.read_csv(DATASET_PATH)
 
 print("Creating hf dataset")
-CACHE_DIR = "huggingface"
-hf_dataset = Dataset.from_generator(generator=generate_hf_dataset, gen_kwargs={"df": df}, cache_dir=CACHE_DIR)
-
-# print("Uploading dataset")
-# hf_dataset = load_dataset(CACHE_DIR)
-# hf_dataset.push_to_hub("daekun/alljoined_dataset", token=HF_PUSH)
+hf_dataset = Dataset.from_generator(generator=generate_hf_dataset, gen_kwargs={"df": df}, cache_dir="huggingface")
+hf_dataset.push_to_hub("Alljoined/" + DSET_NAME, token=HF_PUSH)

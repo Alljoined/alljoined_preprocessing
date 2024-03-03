@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from datasets import load_dataset
 
-CACHE_DIR="huggingface"
+CACHE_DIR="/Users/jonathan/Documents/coding/alljoined/alljoined_preprocessing/final_dataset/huggingface"
 
 load_dotenv()
 HF_PUSH=os.getenv("HF_PUSH")

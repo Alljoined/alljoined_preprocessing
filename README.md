@@ -69,5 +69,5 @@ Current assignments:
 4. Run final_dataset/main_dataset.py to create a CSV of all the data for that frequency range
 5. Download the coco images by running final_dataset/download_coco.py. This file is 22 gigabytes in size.
 6. Update csv_file_path to the csv path you create above in final_dataset/create_huggingface_dataset.py
-7. Run final_dataset/create_huggingface_dataset.py to create the huggingface dataset
-8. Create .env file, set HF_PUSH to your hugginface access token, and then run upload.py to upload your huggingface dataset
+7. Create .env file, set HF_PUSH to your hugginface access token
+8. In final_dataset/create_huggingface_dataset.py, set DSET_NAME and then run the script to create and upload the huggingface dataset
