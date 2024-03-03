@@ -7,20 +7,31 @@ Below is a description of the main files and directories:
     ├── eeg_data/                       # Data files are stored here
         ├── bdf/                        # Raw bdf files
             ├── subj01_session01.bdf
-            ├── subj02_session01.bdf
+            ├── ...
         └── raw_csv/                    # The stimulus data retrieved from bdf
             ├── subj01_session01.csv
-            ├── subj02_session01.csv
+            ├── ...
         └── parsed_csv/                 # Parsed stimulus data with double triggers merged
             ├── subj01_session01.csv
-            ├── subj02_session01.csv
+            ├── ...
         └── fif/                        # Parsed stimulus data converted to .fif format
             ├── subj01_session01.fif
-            ├── subj02_session01.fif
+            ├── ...
         └── final_eeg/                  # Final preprocesses EEG data in .fif format
             ├── subj01_session01.fif
-            ├── subj02_session01.fif
-    ├── process_cell.py
+            ├── ...
+    ├── parse-bdf-event-codes-to-fif.ipynb  # Script to convert bdf to fif and merge double triggers
+    ├── fif-eeg-preprocessing.py            # Script to clean our EEG data
+    ├── final_dataset                   # Working folder to create huggingface dataset
+        ├── data/                       # Folder for final csv file
+            ├── final_dataset_subj04_session2.csv
+        ├── main_dataset.py             # Script to combine our preprocessed, cleaned EEG data and map to coco image ids
+        ├── nsd_coco_conversion.csv     # File that maps from NSD image id to coco id
+        ├── nsd_expdesign.mat           # File that describes which images where shown to which subject
+        ├── create_huggingface_dataset.py   # Script that uploads csv dataset to huggingface
+        ├── download_coco.py            # Script that downloads coco images used in our dataset
+        ├── data/                       # Folder for downloaded coco images
+        ├── behavioural_dataset.py      #
     └── README.md           # The file you're reading now
 
 ## Preprocessing pipeline
