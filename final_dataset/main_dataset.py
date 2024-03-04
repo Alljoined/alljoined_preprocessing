@@ -4,6 +4,8 @@ import mne
 import pandas as pd
 import os
 
+ROOT_PATH = "/Users/jonathan/Documents/coding/alljoined/alljoined_preprocessing"
+LO_HI = "05_125"
 
 def load_csv_to_list(csv_filepath):
     """
@@ -57,7 +59,7 @@ def get_nsd_id(mat_contents, subject, session, id):
     - Image ID corresponding to the specified subject, session, and id.
     """
 
-    if subject % 2 == 0:  # For even subjects, use shared images
+    if session % 2 == 0:  # For even subjects, use shared images
         indices = mat_contents['sharedix'][0]
     else:
         indices = mat_contents['subjectim'][subject - 1]  # Adjust for 0-indexing
@@ -93,16 +95,12 @@ def load_fiff_epochs(fiff_file_path):
     Returns:
     - epochs: Loaded MNE epochs object.
     """
-    try:
-        epochs = mne.read_epochs(fiff_file_path, preload=True)
-        print("Epochs loaded successfully.")
-        return epochs
-    except Exception as e:
-        print(f"Failed to load epochs from file {fiff_file_path}: {e}")
-        return None
+    epochs = mne.read_epochs(fiff_file_path, preload=True)
+    print("Epochs loaded successfully.")
+    return epochs
 
 
-def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_contents):
+def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
     """
     Generates a dataset by combining EEG data with image IDs and timing information.
 
@@ -116,13 +114,6 @@ def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_con
     - A pandas DataFrame containing the combined dataset.
     """
     epochs = load_fiff_epochs(fiff_file_path)
-    if epochs is None:
-        return pd.DataFrame()  # Return an empty DataFrame in case of failure
-
-    csv_data = pd.read_csv(csv_file_path)
-
-    if len(epochs) != len(csv_data):
-        print(f"Warning: The number of epochs ({len(epochs)}) does not match the number of trials ({len(csv_data)}).")
 
     # Extract subject and session from FIFF file name
     base_name = os.path.basename(fiff_file_path)
@@ -133,18 +124,21 @@ def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_con
 
     dataset = []
 
-    for i, row in csv_data.iterrows():
+    for i, event in enumerate(epochs.events):
         trial = i + 1
-        # 240 trials per block
-        block = trial // 240 + 1  
+        block = trial // 240 + 1  # 240 trials per block
 
         # Extract EEG data for the trial
         eeg_data = epochs[i].get_data(copy=False)  # Extracting EEG data for the ith trial
+        eeg_data = eeg_data.squeeze()[:-1]
+        # eeg_data = pickle.dumps(eeg_data, protocol=4)
+        onset = event[0]
+        image_id = event[2]
 
         # Extract other attributes
-        nsd_id = get_nsd_id(mat_contents, subject, session, row['code'])
-        coco_id = get_coco_id(conversion_csv_data, row['code']-1)
-        curr_time = row['onset'] / 512 if 'onset' in row else None
+        nsd_id = get_nsd_id(mat_contents, subject, session, image_id)
+        coco_id = get_coco_id(conversion_csv_data, image_id-1)
+        curr_time = onset / 512
 
         # Append to the dataset
         dataset.append({
@@ -154,7 +148,7 @@ def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_con
             "trial": trial,
             "73k_id": nsd_id,
             "coco_id": coco_id,
-            "eeg": eeg_data.squeeze(),  
+            "eeg": eeg_data,  
             "curr_time": curr_time
         })
 
@@ -163,15 +157,40 @@ def generate_dataset(fiff_file_path, csv_file_path, conversion_csv_data, mat_con
     return dataset_df
 
 
-conversion_csv_filepath = '../create_final_dataset/nsd_coco_conversion.csv'  
+def process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents):
+    # Find all FIFF files in the final_eeg folder
+    fif_files = os.path.join(eeg_data_folder, "final_eeg", LO_HI)
+    all_datasets = []  # List to hold all individual datasets
+
+
+    for file in os.listdir(fif_files):
+        # Generate the dataset
+        dataset = generate_dataset(os.path.join(fif_files, file), conversion_csv_data, nsd_mat_contents)
+
+        # Append the dataset to the list if it's not empty
+        if not dataset.empty:
+            all_datasets.append(dataset)
+        else:
+            print(f"Dataset for {file} is empty and was not included.")
+
+    # Concatenate all datasets into one DataFrame
+    combined_dataset = pd.concat(all_datasets, ignore_index=True)
+
+    # Save the combined dataset to a CSV file
+    output_path = os.path.join(eeg_data_folder, 'combined_dataset.h5')
+    combined_dataset.to_hdf(output_path, key='df')
+    print(f"Combined dataset saved to {output_path}")
+
+
+# Define the paths
+eeg_data_folder = '../eeg_data'
+
+# Load conversion CSV data and .mat contents outside the loop to avoid reloading for each file
+conversion_csv_filepath = 'nsd_coco_conversion.csv'  
 conversion_csv_data = load_csv_to_list(conversion_csv_filepath)
 
-nsd_mat_file_path = '../create_final_dataset/nsd_expdesign.mat'
+nsd_mat_file_path = 'nsd_expdesign.mat'
 nsd_mat_contents = load_mat_file(nsd_mat_file_path)
 
-eeg_fiff_file_path = '../final_eeg_files/subj04_session2.fif'
-eeg_csv_file_path = '../subj04_session2.csv'
-
-dataset = generate_dataset(eeg_fiff_file_path, eeg_csv_file_path, conversion_csv_data, nsd_mat_contents)
-dataset.to_csv('final_dataset_subj04_session2.csv', index=False)
-
+# Process all datasets
+process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents)
