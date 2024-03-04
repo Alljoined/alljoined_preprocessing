@@ -48,7 +48,7 @@ epochs.drop_bad(reject=reject_criteria)
 
 # Remove 'Status' channel (Step 8). 
 # Removing it here because you need this channel for earlier steps like creating epochs
-raw.drop_channels(['Status'])
+epochs.drop_channels(['Status'])
 
 # Rereferencing (Step 17)
 epochs.set_eeg_reference('average')
@@ -61,4 +61,4 @@ epochs.apply_baseline(baseline=(-0.05, 0)) # look at time interval from 50ms fro
 root_name = os.path.splitext(args.input_file)[0][:-4]
 preprocessed_file_path = os.path.join(output_path, f"{root_name}_epo.fif" )
 os.makedirs(os.path.dirname(preprocessed_file_path), exist_ok=True)
-epochs.save(preprocessed_file_path)
+epochs.save(preprocessed_file_path, overwrite=True)
