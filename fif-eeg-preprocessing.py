@@ -14,7 +14,7 @@ HI_FREQ = 125
 output_path = os.path.join('eeg_data', 'final_eeg', str(LOW_FREQ).replace('.', '') + "_" + str(HI_FREQ))
 
 parser = argparse.ArgumentParser(description='Preprocess EEG data')
-parser.add_argument('input_file', type=str, help='Input file name', default='subj04_session2.fif')
+parser.add_argument('input_file', type=str, help='Input file name', default='subj04_session2_eeg.fif')
 args = parser.parse_args()
 
 # Load the BDF file
