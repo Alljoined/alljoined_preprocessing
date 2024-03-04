@@ -5,7 +5,6 @@ Steps 8 through 20
 import mne
 from mne.preprocessing import ICA
 import os
-import scipy.signal
 import numpy as np 
 import argparse
 

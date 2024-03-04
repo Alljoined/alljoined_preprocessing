@@ -3,7 +3,6 @@ from scipy.io import loadmat
 import mne
 import pandas as pd
 import os
-import glob 
 
 ROOT_PATH = "/Users/jonathan/Documents/coding/alljoined/alljoined_preprocessing"
 LO_HI = "05_125"
@@ -131,6 +130,8 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
 
         # Extract EEG data for the trial
         eeg_data = epochs[i].get_data(copy=False)  # Extracting EEG data for the ith trial
+        eeg_data = eeg_data.squeeze()[:-1]
+        # eeg_data = pickle.dumps(eeg_data, protocol=4)
         onset = event[0]
         image_id = event[2]
 
@@ -147,7 +148,7 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
             "trial": trial,
             "73k_id": nsd_id,
             "coco_id": coco_id,
-            "eeg": eeg_data.squeeze(),  
+            "eeg": eeg_data,  
             "curr_time": curr_time
         })
 
@@ -164,7 +165,6 @@ def process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents)
 
     for file in os.listdir(fif_files):
         # Generate the dataset
-        print("generating for file", file)
         dataset = generate_dataset(os.path.join(fif_files, file), conversion_csv_data, nsd_mat_contents)
 
         # Append the dataset to the list if it's not empty
@@ -177,9 +177,9 @@ def process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents)
     combined_dataset = pd.concat(all_datasets, ignore_index=True)
 
     # Save the combined dataset to a CSV file
-    output_csv_path = os.path.join(eeg_data_folder, 'combined_dataset.csv')
-    combined_dataset.to_csv(output_csv_path, index=False)
-    print(f"Combined dataset saved to {output_csv_path}")
+    output_path = os.path.join(eeg_data_folder, 'combined_dataset.h5')
+    combined_dataset.to_hdf(output_path, key='df')
+    print(f"Combined dataset saved to {output_path}")
 
 
 # Define the paths
