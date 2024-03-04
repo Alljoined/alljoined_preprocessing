@@ -6,6 +6,7 @@ fif_files=(
     "subj01_session1_eeg.fif"
     "subj01_session2_eeg.fif"
     "subj02_session1_eeg.fif"
+    "subj03_session1_eeg.fif"
     "subj03_session2_eeg.fif"
     "subj04_session1_eeg.fif"
     "subj04_session2_eeg.fif"
@@ -14,7 +15,6 @@ fif_files=(
     "subj06_session2_eeg.fif"
     "subj07_session1_eeg.fif"
     "subj08_session1_eeg.fif"
-    "subj11_session1_eeg.fif"
 )
 
 # Loop through each .fif file and run the Python script
