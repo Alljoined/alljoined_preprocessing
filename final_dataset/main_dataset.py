@@ -160,26 +160,17 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
 def process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents):
     # Find all FIFF files in the final_eeg folder
     fif_files = os.path.join(eeg_data_folder, "final_eeg", LO_HI)
-    all_datasets = []  # List to hold all individual datasets
-
 
     for file in os.listdir(fif_files):
-        # Generate the dataset
-        dataset = generate_dataset(os.path.join(fif_files, file), conversion_csv_data, nsd_mat_contents)
+        if file.endswith('_epo.fif'):
+            # Generate the dataset
+            print("generating dset for", file)
+            dataset = generate_dataset(os.path.join(fif_files, file), conversion_csv_data, nsd_mat_contents)
 
-        # Append the dataset to the list if it's not empty
-        if not dataset.empty:
-            all_datasets.append(dataset)
-        else:
-            print(f"Dataset for {file} is empty and was not included.")
-
-    # Concatenate all datasets into one DataFrame
-    combined_dataset = pd.concat(all_datasets, ignore_index=True)
-
-    # Save the combined dataset to a CSV file
-    output_path = os.path.join(eeg_data_folder, 'combined_dataset.h5')
-    combined_dataset.to_hdf(output_path, key='df')
-    print(f"Combined dataset saved to {output_path}")
+            output_name = os.path.basename(file)[:-8] + ".h5"
+            output_path = os.path.join(eeg_data_folder, "final_hdf5", LO_HI,  output_name)
+            dataset.to_hdf(output_path, key='df', complib='blosc', complevel=9)
+            print(f"Dataset saved to {output_path}")
 
 
 # Define the paths
