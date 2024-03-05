@@ -39,14 +39,10 @@ def generate_hf_dataset(df_path, image_path=COCO_PATH):
 
 
 def aggregate_hf_datasets(folder_path):
-    count = 0
     for file_name in os.listdir(folder_path):
-        if count == 2:
-            break
         if file_name.endswith(".h5"):
             df_path = os.path.join(folder_path, file_name)
             yield from generate_hf_dataset(df_path)
-            count += 1
 
 
 print("Creating hf dataset")
