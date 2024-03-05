@@ -58,21 +58,22 @@ We need to create a dataset for each of the frequency ranges: 0.5/125, 55/95, 14
 
 Current assignments:
 
-0.5/125: Jonathan
-55/95: Yash
-14/70: Tazik
-5/95: Daekun
+- 0.5/125: Jonathan
+- 55/95: Yash
+- 14/70: Tazik
+- 5/95: Daekun
 
 1. Modify the frequency in fif-eeg-preprocessing.py, on this line:
-   raw.filter(l_freq=0.5, h_freq=125)
+   `raw.filter(l_freq=0.5, h_freq=125)`
    Then modify the path and replace low, high with actual values. For 0.5, use 05:
-   preprocessed_file_path = os.path.join('eeg_data', 'final_eeg_low_high', f"{root_name}\_epo.fif" )
-   ex. preprocessed_file_path = os.path.join('eeg_data', 'final_eeg_05_125', f"{root_name}\_epo.fif" )
+   `preprocessed_file_path = os.path.join('eeg_data', 'final_eeg_low_high', f"{root_name}\_epo.fif" )``
+   ex. `preprocessed_file_path = os.path.join('eeg_data', 'final_eeg_05_125', f"{root_name}\_epo.fif" )``
 2. Run fif-eeg-preprocessing.py to preprocess the .fif data. This performs band filtering, epoch detection, PCA, eye blink removal, and baseline correction. The output is saved in /eeg_data/final_eeg.
 3. Change eeg_fif_folder to the correct one in final_dataset/main_dataset.py, on this line:
    eeg_fif_folder = '../eeg_data/final_eeg'
    Then change output_csv_path to point to also include the frequency range in the name:
    output_csv_path = os.path.join(eeg_csv_folder, '../combined_dataset.csv')
+   Finally, change `LO_HI` to the right range e.g. `LO_HI = "05_125"``
 4. Run final_dataset/main_dataset.py to create a CSV of all the data for that frequency range
 5. Download the coco images by running final_dataset/download_coco.py. This file is 22 gigabytes in size.
 6. Update csv_file_path to the csv path you create above in final_dataset/create_huggingface_dataset.py
