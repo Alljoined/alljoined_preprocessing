@@ -6,19 +6,26 @@ Below is a description of the main files and directories:
 
     ├── eeg_data/                       # Data files are stored here
         ├── bdf/                        # Raw bdf files
-            ├── subj01_session01.bdf
+            ├── subj01_session1.bdf
             ├── ...
         └── raw_csv/                    # The stimulus data retrieved from bdf
-            ├── subj01_session01.csv
+            ├── subj01_session1.csv
             ├── ...
         └── parsed_csv/                 # Parsed stimulus data with double triggers merged
-            ├── subj01_session01.csv
+            ├── subj01_session1.csv
             ├── ...
         └── fif/                        # Parsed stimulus data converted to .fif format
-            ├── subj01_session01.fif
+            ├── subj01_session1_eeg.fif
             ├── ...
-        └── final_eeg/                  # Final preprocessed EEG data in .fif format
-            ├── subj01_session01.fif
+        └── final_eeg/                  # Final preprocessed and epoched EEG data in .fif format
+            ├── 05_125/                 # A frequency range of our filtering
+                ├── subj01_session1_epo.fif
+                ├── ...
+            ├── ...
+        └── final_hdf5/                 # Preprocessed EEG data, stimulus info as pd dataframes saved in hdf5 format
+            ├── 05_125/
+                ├── subj01_session1.h5
+                ├── ...
             ├── ...
     ├── parse-bdf-event-codes-to-fif.ipynb  # Script to convert bdf to fif and merge double triggers
     ├── fif-eeg-preprocessing.py            # Script to clean our EEG data
@@ -31,7 +38,7 @@ Below is a description of the main files and directories:
         ├── create_huggingface_dataset.py   # Script that uploads CSV dataset to huggingface
         ├── download_coco.py            # Script that downloads coco images used in our dataset
         ├── data/                       # Folder for downloaded coco images
-        ├── behavioural_dataset.py      #
+        ├── behavioural_dataset.py      # Script to create a dataset for just our behavioural data
         ├── huggingface/                # Huggingface cache dir for our new dataset
     └── README.md           # The file you're reading now
 
@@ -54,7 +61,7 @@ Current assignments:
 - 0.5/125: Jonathan
 - 55/95: Yash
 - 14/70: Tazik
-- 5/95: Daekun
+- 5/95: Yash
 
 1. Modify the frequency in fif-eeg-preprocessing.py, on this line:
    `raw.filter(l_freq=0.5, h_freq=125)`

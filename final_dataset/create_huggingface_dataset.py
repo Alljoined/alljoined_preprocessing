@@ -8,24 +8,25 @@ from dotenv import load_dotenv
 
 
 DSET_NAME = "05_125"
+DATASET_PATH = '../eeg_data/final_hdf5/' + DSET_NAME
+COCO_PATH = 'stimulus/datasets--pscotti--mindeyev2/snapshots/183269ab73b49d2fa10b5bfe077194992934e4e6/coco_images_224_float16.hdf5'
+
 load_dotenv()
 HF_PUSH = os.getenv("HF_PUSH")
 
-DATASET_PATH = '../eeg_data/combined_dataset.h5'
-COCO_PATH = 'stimulus/datasets--pscotti--mindeyev2/snapshots/183269ab73b49d2fa10b5bfe077194992934e4e6/coco_images_224_float16.hdf5'
 
-def fetch_image(nsd_id, file_path=COCO_PATH):
-    with h5py.File(file_path, 'r') as hdf5_file:
+def fetch_image(nsd_id, image_path=COCO_PATH):
+    with h5py.File(image_path, 'r') as hdf5_file:
         image_data = (hdf5_file['images'][nsd_id-1, ...] * 255).astype(np.uint8)
         image_data = np.transpose(image_data, (1, 2, 0))  # Transpose to (224, 224, 3)
         return Image.fromarray(image_data)
 
-
-def generate_hf_dataset(df, file_path=COCO_PATH):
+def generate_hf_dataset(df_path, image_path=COCO_PATH):
+    df = pd.read_hdf(df_path, key="df")
     for _, row in df.iterrows():
-        image = fetch_image(row['73k_id'], file_path)
+        image = fetch_image(row['73k_id'], image_path)  # Adjust fetch_image as needed
         yield {
-            'EEG': row["eeg"], 
+            'EEG': row["eeg"],
             'image': image,
             'subject_id': row['subject_id'],
             'session': row['session'],
@@ -36,10 +37,16 @@ def generate_hf_dataset(df, file_path=COCO_PATH):
             'curr_time': row['curr_time'],
         }
 
-df = pd.read_hdf(DATASET_PATH, key="df")
+
+def aggregate_hf_datasets(folder_path):
+    for file_name in os.listdir(folder_path):
+        if file_name.endswith(".h5"):
+            df_path = os.path.join(folder_path, file_name)
+            yield from generate_hf_dataset(df_path)
+
 
 print("Creating hf dataset")
-hf_dataset = Dataset.from_generator(generator=generate_hf_dataset, gen_kwargs={"df": df}, features=Features({
+hf_dataset = Dataset.from_generator(generator=aggregate_hf_datasets, gen_kwargs={"folder_path": DATASET_PATH}, features=Features({
     'EEG': Sequence(feature=Sequence(feature=Value('float64'))),
     'image': DatasetsImage(),
     'subject_id': Value('int32'),
