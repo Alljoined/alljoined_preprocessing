@@ -123,10 +123,10 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
     session = int(session)  
 
     dataset = []
+    block = 1
 
     for i, event in enumerate(epochs.events):
         trial = i + 1
-        block = trial // 240 + 1  # 240 trials per block
 
         # Extract EEG data for the trial
         eeg_data = epochs[i].get_data(copy=False)  # Extracting EEG data for the ith trial
@@ -134,6 +134,11 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
         # eeg_data = pickle.dumps(eeg_data, protocol=4)
         onset = event[0]
         image_id = event[2]
+
+        if image_id > 120 * (block % 8):
+            block += 1
+        elif block == 8 and image_id < 120:
+            block = 9
 
         # Extract other attributes
         nsd_id = get_nsd_id(mat_contents, subject, session, image_id)
