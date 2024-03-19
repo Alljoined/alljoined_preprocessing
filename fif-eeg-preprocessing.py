@@ -43,7 +43,7 @@ events = mne.find_events(raw)
 epochs = mne.Epochs(raw, events, event_id=None, tmin=-0.05, tmax=0.60, preload=True)
 
 # Automated Artifact Rejection (Step 12): Setting threshold using autoreject
-reject_criteria = get_rejection_threshold(epochs)
+reject_criteria = get_rejection_threshold(epochs, ch_types=["eeg"])
 epochs.drop_bad(reject=reject_criteria)
 
 # Remove 'Status' channel (Step 8). 

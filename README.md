@@ -66,11 +66,7 @@ Current assignments:
 1. Modify the frequency in fif-eeg-preprocessing.py, on this line:
    `LOW_FREQ = 0.5 HI_FREQ = 125`
 2. Run fif-eeg-preprocessing.py to preprocess the .fif data. This performs band filtering, epoch detection, PCA, eye blink removal, and baseline correction. The output is saved in /eeg_data/final_eeg.
-3. Change eeg_fif_folder to the correct one in final_dataset/main_dataset.py, on this line:
-   eeg_fif_folder = '../eeg_data/final_eeg'
-   Then change output_csv_path to point to also include the frequency range in the name:
-   output_csv_path = os.path.join(eeg_csv_folder, '../combined_dataset.csv')
-   Finally, change `LO_HI` to the right range e.g. `LO_HI = "05_125"``
+3. In main_dataset.py, change `ROOT_PATH` to be your directory. Then change `LO_HI` to the right range e.g. `LO_HI = "05_125"`
 4. Run final_dataset/main_dataset.py to create a CSV of all the data for that frequency range
 5. Download the coco images by running final_dataset/download_coco.py. This file is 22 gigabytes in size.
 6. Update csv_file_path to the csv path you create above in final_dataset/create_huggingface_dataset.py

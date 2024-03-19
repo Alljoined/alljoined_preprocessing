@@ -45,7 +45,7 @@ def load_mat_file(file_path):
     return mat_contents
 
 
-def get_nsd_id(mat_contents, subject, session, id):
+def get_nsd_indices(mat_contents, subject, session):
     """
     Returns the NSD image ID for a given subject, session, and id.
 
@@ -59,13 +59,13 @@ def get_nsd_id(mat_contents, subject, session, id):
     - Image ID corresponding to the specified subject, session, and id.
     """
 
-    if session % 2 == 0:  # For even subjects, use shared images
+    if session % 2 == 0:  # For even sessions, use shared images
         indices = mat_contents['sharedix'][0]
     else:
         indices = mat_contents['subjectim'][subject - 1]  # Adjust for 0-indexing
 
     # Fetch and return the image ID using the global index.
-    return indices[id]
+    return indices
 
 
 def get_coco_id(csv_data, index):
@@ -121,6 +121,7 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
 
     subject = int(subject) 
     session = int(session)  
+    nsd_indices = get_nsd_indices(mat_contents, subject, session)
 
     dataset = []
     block = 1
@@ -129,8 +130,7 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
         trial = i + 1
 
         # Extract EEG data for the trial
-        eeg_data = epochs[i].get_data(copy=False)  # Extracting EEG data for the ith trial
-        eeg_data = eeg_data.squeeze()[:-1] # TODO: remove if fif files are 64 channels intead of 65
+        eeg_data = epochs[i].get_data(copy=False).squeeze()  # Extracting EEG data for the ith trial
         # eeg_data = pickle.dumps(eeg_data, protocol=4)
         onset = event[0]
         image_id = event[2]
@@ -141,7 +141,7 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
             block = 9
 
         # Extract other attributes
-        nsd_id = get_nsd_id(mat_contents, subject, session, image_id)
+        nsd_id = nsd_indices[image_id]
         coco_id = get_coco_id(conversion_csv_data, image_id-1)
         curr_time = onset / 512
 
