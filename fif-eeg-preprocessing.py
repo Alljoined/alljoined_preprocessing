@@ -4,6 +4,7 @@ Steps 8 through 20
 
 import mne
 from mne.preprocessing import ICA
+from autoreject import get_rejection_threshold
 import os
 import numpy as np 
 import argparse
@@ -14,7 +15,7 @@ HI_FREQ = 125
 output_path = os.path.join('eeg_data', 'final_eeg', str(LOW_FREQ).replace('.', '') + "_" + str(HI_FREQ))
 
 parser = argparse.ArgumentParser(description='Preprocess EEG data')
-parser.add_argument('input_file', type=str, help='Input file name', default='subj04_session2.fif')
+parser.add_argument('input_file', type=str, help='Input file name', default='subj04_session2_eeg.fif')
 args = parser.parse_args()
 
 # Load the BDF file
@@ -41,9 +42,8 @@ ica.apply(raw)
 events = mne.find_events(raw)
 epochs = mne.Epochs(raw, events, event_id=None, tmin=-0.05, tmax=0.60, preload=True)
 
-# Automated Artifact Rejection (Step 12): Setting threshold to 700 µV
-# todo: check also for -700e-6
-reject_criteria = dict(eeg=700e-6)  # 700 µV max peak to peak signal amplitude
+# Automated Artifact Rejection (Step 12): Setting threshold using autoreject
+reject_criteria = get_rejection_threshold(epochs)
 epochs.drop_bad(reject=reject_criteria)
 
 # Remove 'Status' channel (Step 8). 

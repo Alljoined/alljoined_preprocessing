@@ -61,7 +61,7 @@ Current assignments:
 - 0.5/125: Jonathan
 - 55/95: Yash
 - 14/70: Tazik
-- 5/95: Daekun
+- 5/95: Yash
 
 1. Modify the frequency in fif-eeg-preprocessing.py, on this line:
    `LOW_FREQ = 0.5 HI_FREQ = 125`

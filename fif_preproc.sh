@@ -6,7 +6,6 @@ fif_files=(
     "subj01_session1_eeg.fif"
     "subj01_session2_eeg.fif"
     "subj02_session1_eeg.fif"
-    "subj03_session1_eeg.fif"
     "subj03_session2_eeg.fif"
     "subj04_session1_eeg.fif"
     "subj04_session2_eeg.fif"
