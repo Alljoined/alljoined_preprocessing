@@ -130,7 +130,7 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
 
         # Extract EEG data for the trial
         eeg_data = epochs[i].get_data(copy=False)  # Extracting EEG data for the ith trial
-        eeg_data = eeg_data.squeeze()[:-1]
+        eeg_data = eeg_data.squeeze()[:-1] # TODO: remove if fif files are 64 channels intead of 65
         # eeg_data = pickle.dumps(eeg_data, protocol=4)
         onset = event[0]
         image_id = event[2]
