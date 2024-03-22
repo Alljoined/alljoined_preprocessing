@@ -4,7 +4,7 @@ Steps 8 through 20
 
 import mne
 from mne.preprocessing import ICA
-from autoreject import get_rejection_threshold
+from autoreject import get_rejection_threshold, compute_thresholds, AutoReject
 import os
 import numpy as np 
 import argparse
@@ -41,10 +41,18 @@ ica.apply(raw)
 # Detect events and Epoching (Step 10)
 events = mne.find_events(raw)
 epochs = mne.Epochs(raw, events, event_id=None, tmin=-0.05, tmax=0.60, preload=True)
+picks = mne.pick_types(epochs.info, eeg=True, stim=False, exclude='bads')
 
 # Automated Artifact Rejection (Step 12): Setting threshold using autoreject
-reject_criteria = get_rejection_threshold(epochs, ch_types=["eeg"])
-epochs.drop_bad(reject=reject_criteria)
+#TODO: they choose these hyperparams w/o explanation in docs -> https://autoreject.github.io/stable/auto_examples/plot_auto_repair.html
+n_interpolates = np.array([1, 4, 32])
+consensus_percs = np.linspace(0, 1.0, 11)
+
+ar = AutoReject(n_interpolates, consensus_percs, picks=picks, thresh_method='random_search', random_state=42)
+
+epochs = ar.fit_transform(epochs)
+
+epochs.average().plot()
 
 # Remove 'Status' channel (Step 8). 
 # Removing it here because you need this channel for earlier steps like creating epochs
