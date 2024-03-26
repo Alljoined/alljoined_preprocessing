@@ -29,8 +29,8 @@ def fetch_image(nsd_id, image_path=COCO_PATH):
 def generate_hf_dataset(df_path, image_path, split_criteria, split):
     df = pd.read_hdf(df_path, key="df")
     for _, row in df.iterrows():
-        is_train = split_criteria(row['73k_id'])
-        if (split == 'train' and is_train) or (split == 'test' and not is_train): 
+        is_test = split_criteria(row['73k_id'])
+        if (split == 'train' and not is_test) or (split == 'test' and is_test): 
             image = fetch_image(row['73k_id'], image_path)  # Adjust fetch_image as needed
             yield {
                 'EEG': row["eeg"],
@@ -66,7 +66,7 @@ dset_features = Features({
 })
 
 # img_id is 73k id
-# returns bool, true if it belongs in train set
+# returns bool, true if it belongs in test set
 def split_criteria(img_id):
     return img_id in split_array
 
