@@ -4,7 +4,7 @@ import mne
 import pandas as pd
 import os
 
-ROOT_PATH = "/Users/jonathan/Documents/coding/alljoined/alljoined_preprocessing"
+DATA_FOLDER = '/srv/eeg_reconstruction/shared/biosemi-dataset'
 LO_HI = "05_125"
 
 def load_csv_to_list(csv_filepath):
@@ -30,19 +30,6 @@ def load_csv_to_list(csv_filepath):
                 data.append((int(row[0]), int(row[1])))
     return data
 
-
-def load_mat_file(file_path):
-    """
-    Loads a .mat file.
-
-    Parameters:
-    - file_path: Path to the .mat file.
-
-    Returns:
-    - The contents of the .mat file.
-    """
-    mat_contents = loadmat(file_path)
-    return mat_contents
 
 
 def get_nsd_indices(mat_contents, subject, session):
@@ -133,7 +120,7 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
         eeg_data = epochs[i].get_data(copy=False).squeeze()  # Extracting EEG data for the ith trial
         # eeg_data = pickle.dumps(eeg_data, protocol=4)
         onset = event[0]
-        image_id = event[2]
+        image_id = event[2] - 1
 
         if image_id > 120 * (block % 8):
             block += 1
@@ -142,8 +129,11 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
 
         # Extract other attributes
         nsd_id = nsd_indices[image_id]
-        coco_id = get_coco_id(conversion_csv_data, image_id-1)
+        coco_id = get_coco_id(conversion_csv_data, nsd_id)
         curr_time = onset / 512
+
+        import pdb
+        pdb.set_trace()
 
         # Append to the dataset
         dataset.append({
@@ -177,16 +167,12 @@ def process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents)
             dataset.to_hdf(output_path, key='df', complib='blosc', complevel=9)
             print(f"Dataset saved to {output_path}")
 
-
-# Define the paths
-eeg_data_folder = '../eeg_data'
-
 # Load conversion CSV data and .mat contents outside the loop to avoid reloading for each file
 conversion_csv_filepath = 'nsd_coco_conversion.csv'  
 conversion_csv_data = load_csv_to_list(conversion_csv_filepath)
 
 nsd_mat_file_path = 'nsd_expdesign.mat'
-nsd_mat_contents = load_mat_file(nsd_mat_file_path)
+nsd_mat_contents = loadmat(nsd_mat_file_path)
 
 # Process all datasets
-process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents)
+process_all_datasets(DATA_FOLDER, conversion_csv_data, nsd_mat_contents)
