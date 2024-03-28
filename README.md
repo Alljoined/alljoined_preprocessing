@@ -56,13 +56,6 @@ Below is a description of the main files and directories:
 
 We need to create a dataset for each of the frequency ranges: 0.5/125, 55/95, 14/70, 5/95. You should have been assigned one of these four to continue.
 
-Current assignments:
-
-- 0.5/125: Jonathan
-- 55/95: Yash
-- 14/70: Tazik
-- 5/95: Yash
-
 1. Modify the frequency in fif-eeg-preprocessing.py, on this line:
    `LOW_FREQ = 0.5 HI_FREQ = 125`
 2. Run fif-eeg-preprocessing.py to preprocess the .fif data. This performs band filtering, epoch detection, PCA, eye blink removal, and baseline correction. The output is saved in /eeg_data/final_eeg.
@@ -70,5 +63,5 @@ Current assignments:
 4. Run final_dataset/main_dataset.py to create a CSV of all the data for that frequency range
 5. Download the coco images by running final_dataset/download_coco.py. This file is 22 gigabytes in size.
 6. Update csv_file_path to the csv path you create above in final_dataset/create_huggingface_dataset.py
-7. Create .env file, set HF_PUSH to your hugginface access token
+7. Create .env file ini /final_dataset, set HF_PUSH to your hugginface access token
 8. In final_dataset/create_huggingface_dataset.py, set DSET_NAME and then run the script to create and upload the huggingface dataset
