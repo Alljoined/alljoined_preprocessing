@@ -4,8 +4,7 @@
 venv
 /raw
 /final_dataset/nsd_coco_conversion.csv
-/final_dataset/nsd_expdesign.mat
-/final_dataset/data/*
+/final_dataset/data
 /final_dataset/stimulus/*
 /final_dataset/huggingface/*
 .env
