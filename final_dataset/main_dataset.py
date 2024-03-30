@@ -120,7 +120,7 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
         eeg_data = epochs[i].get_data(copy=False).squeeze()  # Extracting EEG data for the ith trial
         # eeg_data = pickle.dumps(eeg_data, protocol=4)
         onset = event[0]
-        image_id = event[2] - 1
+        image_id = event[2] - 1 # Triggers are sent between [1, 960]
 
         if image_id > 120 * (block % 8):
             block += 1
@@ -128,12 +128,9 @@ def generate_dataset(fiff_file_path, conversion_csv_data, mat_contents):
             block = 9
 
         # Extract other attributes
-        nsd_id = nsd_indices[image_id]
-        coco_id = get_coco_id(conversion_csv_data, nsd_id)
+        nsd_id = nsd_indices[image_id] - 1 # NSD Indices count from 1
+        coco_id = get_coco_id(conversion_csv_data, nsd_id)  
         curr_time = onset / 512
-
-        import pdb
-        pdb.set_trace()
 
         # Append to the dataset
         dataset.append({
