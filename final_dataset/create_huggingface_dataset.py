@@ -4,7 +4,6 @@ from datasets import Features, Dataset, DatasetDict, Sequence, Value
 from dotenv import load_dotenv
 import json
 
-
 DSET_NAME = "05_125"
 DATASET_PATH = '/srv/eeg_reconstruction/shared/biosemi-dataset/final_hdf5/' + DSET_NAME
 
@@ -12,6 +11,7 @@ load_dotenv()
 HF_PUSH = os.getenv("HF_PUSH")
 
 file_path = 'test_indices.json'
+
 with open(file_path, 'r') as file:
     split_array = json.load(file)
 
@@ -46,12 +46,12 @@ dset_features = Features({
     'session': Value('int32'),
     'block': Value('int32'),
     'trial': Value('int32'),
-    '73k_id': Value('int32'),
+    '73k_id': Value('int32'), #0-indexed
     'coco_id': Value('int32'),
     'curr_time': Value('float32'),
 })
 
-# img_id is 73k id
+# img_id is 73k id, 0-indexed
 # returns bool, true if it belongs in test set
 def split_criteria(img_id):
     return img_id in split_array
