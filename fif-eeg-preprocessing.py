@@ -1,7 +1,3 @@
-"""
-Steps 8 through 20 
-"""
-
 import mne
 from mne.preprocessing import ICA
 from autoreject import get_rejection_threshold, compute_thresholds, AutoReject
@@ -10,16 +6,17 @@ import numpy as np
 import argparse
 
 # experiment with 0.5/125, 55/95, 14/70, 5/95
+DATA_PATH="/srv/eeg_reconstruction/shared/biosemi-dataset"
 LOW_FREQ = 0.5
 HI_FREQ = 125
-output_path = os.path.join('eeg_data', 'final_eeg', str(LOW_FREQ).replace('.', '') + "_" + str(HI_FREQ))
+output_path = os.path.join(DATA_PATH, 'final_eeg', str(LOW_FREQ).replace('.', '') + "_" + str(HI_FREQ))
 
 parser = argparse.ArgumentParser(description='Preprocess EEG data')
 parser.add_argument('input_file', type=str, help='Input file name', default='subj04_session2_eeg.fif')
 args = parser.parse_args()
 
 # Load the BDF file
-fif_file_path = os.path.join('eeg_data', 'fif', args.input_file) 
+fif_file_path = os.path.join(DATA_PATH, 'fif', args.input_file) 
 raw = mne.io.read_raw_fif(fif_file_path, preload=True)
 
 # Apply standard montage

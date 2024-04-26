@@ -4,7 +4,7 @@ from datasets import Features, Dataset, DatasetDict, Sequence, Value
 from dotenv import load_dotenv
 import json
 
-DSET_NAME = "05_125"
+DSET_NAME = "fulltest"
 DATASET_PATH = '/srv/eeg_reconstruction/shared/biosemi-dataset/final_hdf5/' + DSET_NAME
 
 load_dotenv()

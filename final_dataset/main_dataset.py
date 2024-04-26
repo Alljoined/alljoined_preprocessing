@@ -154,7 +154,8 @@ def process_all_datasets(eeg_data_folder, conversion_csv_data, nsd_mat_contents)
     fif_files = os.path.join(eeg_data_folder, "final_eeg", LO_HI)
 
     for file in os.listdir(fif_files):
-        if file.endswith('_epo.fif'):
+        # if file.endswith('_epo.fif'):
+        if file == "subj08_session2_epo.fif":
             # Generate the dataset
             print("generating dset for", file)
             dataset = generate_dataset(os.path.join(fif_files, file), conversion_csv_data, nsd_mat_contents)
