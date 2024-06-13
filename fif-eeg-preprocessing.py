@@ -1,14 +1,12 @@
 import mne
-from mne.preprocessing import ICA
-from autoreject import get_rejection_threshold, compute_thresholds, AutoReject
 import os
 import numpy as np 
 import argparse
 
 # experiment with 0.5/125, 55/95, 14/70, 5/95
 DATA_PATH="/srv/eeg_reconstruction/shared/biosemi-dataset"
-LOW_FREQ = 0.5
-HI_FREQ = 125
+LOW_FREQ = 0.1
+HI_FREQ = 100
 output_path = os.path.join(DATA_PATH, 'final_eeg', str(LOW_FREQ).replace('.', '') + "_" + str(HI_FREQ))
 
 parser = argparse.ArgumentParser(description='Preprocess EEG data')
@@ -19,6 +17,15 @@ args = parser.parse_args()
 fif_file_path = os.path.join(DATA_PATH, 'fif', args.input_file) 
 raw = mne.io.read_raw_fif(fif_file_path, preload=True)
 
+chan_order = ['Fp1', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8', 'F7', 'F5', 'F3',
+				  'F1', 'F2', 'F4', 'F6', 'F8', 'FT9', 'FT7', 'FC5', 'FC3', 'FC1', 
+				  'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'FT10', 'T7', 'C5', 'C3', 'C1',
+				  'Cz', 'C2', 'C4', 'C6', 'T8', 'TP9', 'TP7', 'CP5', 'CP3', 'CP1', 
+				  'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'TP10', 'P7', 'P5', 'P3', 'P1',
+				  'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO3', 'POz', 'PO4', 'PO8',
+				  'O1', 'Oz', 'O2']
+raw.pick_channels(chan_order, ordered=True)
+
 # Apply standard montage
 montage = mne.channels.make_standard_montage('standard_1020')
 raw.set_montage(montage)
@@ -27,43 +34,32 @@ raw.set_montage(montage)
 raw.filter(l_freq=LOW_FREQ, h_freq=HI_FREQ)
 raw.notch_filter(freqs=60)
 
-# ICA for artifact correction (Steps 14 and 15)
-# As is typically done with ICA, the data are first scaled to unit variance and whitened using principal components analysis (PCA)
-# before performing the ICA decomposition. It uses the # of components needed to explain 95% of the variance
-ica = ICA(n_components=0.95, random_state=97)
-ica.fit(raw)
-ica.exclude = [1]
-ica.apply(raw)
-
-# Detect events and Epoching (Step 10)
+# Detect events and Epoching
 events = mne.find_events(raw)
-epochs = mne.Epochs(raw, events, event_id=None, tmin=-0.05, tmax=0.60, preload=True)
-picks = mne.pick_types(epochs.info, eeg=True, stim=False, exclude='bads')
+epochs = mne.Epochs(raw, events, event_id=None, tmin=-0.05, tmax=0.60, baseline=(None,0), preload=True)
 
-# Automated Artifact Rejection (Step 12): Setting threshold using autoreject
-#TODO: they choose these hyperparams w/o explanation in docs -> https://autoreject.github.io/stable/auto_examples/plot_auto_repair.html
-n_interpolates = np.array([1, 4, 32])
-consensus_percs = np.linspace(0, 1.0, 11)
+### Sort the data ###
+data = epochs.get_data()
+events = epochs.events[:,2]
+img_cond = np.unique(events)
+del epochs
 
-ar = AutoReject(n_interpolates, consensus_percs, picks=picks, thresh_method='random_search', random_state=42)
-
-epochs = ar.fit_transform(epochs)
-
-epochs.average().plot()
-
-# Remove 'Status' channel (Step 8). 
-# Removing it here because you need this channel for earlier steps like creating epochs
-epochs.drop_channels(['Status'])
-
-# Rereferencing (Step 17)
-epochs.set_eeg_reference('average')
-
-# Baseline correction (Step 18)
-# Baseline correction before ICA is not recommended by the MNE-Python developers, as it doesn’t guarantee optimal results.
-epochs.apply_baseline(baseline=(-0.05, 0)) # look at time interval from 50ms from start to 0 seconds from start
-
-# Saving the preprocessed data
-root_name = os.path.splitext(args.input_file)[0][:-4]
-preprocessed_file_path = os.path.join(output_path, f"{root_name}_epo.fif" )
-os.makedirs(os.path.dirname(preprocessed_file_path), exist_ok=True)
-epochs.save(preprocessed_file_path, overwrite=True)
+# Select only a maximum number of EEG repetitions
+if data_part == 'test':
+    max_rep = 20
+else:
+    max_rep = 2
+# Sorted data matrix of shape:
+# Image conditions × EEG repetitions × EEG channels × EEG time points
+sorted_data = np.zeros((len(img_cond),max_rep,data.shape[1],
+    data.shape[2]))
+for i in range(len(img_cond)):
+    # Find the indices of the selected image condition
+    idx = np.where(events == img_cond[i])[0]
+    # Randomly select only the max number of EEG repetitions
+    idx = shuffle(idx, random_state=seed, n_samples=max_rep)
+    sorted_data[i] = data[idx]
+del data
+epoched_data.append(sorted_data[:, :, :, 50:])
+img_conditions.append(img_cond)
+del sorted_data
