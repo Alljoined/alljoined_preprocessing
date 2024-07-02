@@ -1,5 +1,4 @@
 import mne
-import os
 import argparse
 from preprocessing_utils import epoching
 from preprocessing_utils import mvnn

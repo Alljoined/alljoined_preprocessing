@@ -43,6 +43,9 @@ def epoching(args, seed):
 		raw.filter(l_freq=args.lo_freq, h_freq=args.hi_freq)
 		raw.notch_filter(freqs=60)
 
+		import pdb
+		pdb.set_trace()
+
 		# Epoch into events and drop channels
 		events = mne.find_events(raw)
 		epochs = mne.Epochs(raw, events, tmin=-0.05, tmax=0.60, baseline=(None,0), preload=True)
@@ -52,7 +55,7 @@ def epoching(args, seed):
 
 		data = epochs.get_data(copy=True)
 		events = epochs.events[:,2]
-		img_cond = np.unique(events)
+		img_cond = np.unique(events) # this is sorted
 		del epochs
 		max_rep = 4
 
